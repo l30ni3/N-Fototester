@@ -1,9 +1,15 @@
+from app import create_app, db
+from app.models import Measurement
 import time
-from flask import Flask
 
-app = Flask(__name__)
+app = create_app()
 
 
 @app.route('/time')
 def get_current_time():
     return {'time': time.time()}
+
+
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'Measurement': Measurement}

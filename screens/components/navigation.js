@@ -23,8 +23,7 @@ const DrawerContent = ({navigation, state}) => (
   <Drawer
     selectedIndex={new IndexPath(state.index)}
     onSelect={index => navigation.navigate(state.routeNames[index.row])}>
-    <DrawerItem title="Meine Messungen" />
-    <DrawerItem title="Details" />
+    <DrawerItem title="Alle Messungen" />
     <DrawerItem title="Neue Messung" />
   </Drawer>
 );

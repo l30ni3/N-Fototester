@@ -13,13 +13,14 @@ import {
 import {SafeAreaView} from 'react-native';
 
 // to be replaced with real data
-const data = new Array(8).fill({
-  title: 'Title for Item',
-  description: 'Description for Item',
-});
+// const data = new Array(8).fill({
+//   title: 'Title for Item',
+//   description: 'Description for Item',
+// });
 
 export const HomeScreen = ({navigation}) => {
   const [currentTime, setCurrentTime] = useState(0);
+  const [data, setData] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
 
   const MenuAction = () => (
@@ -39,7 +40,7 @@ export const HomeScreen = ({navigation}) => {
 
   const renderItem = ({item, index}) => (
     <ListItem
-      title={`${item.title} ${index + 1}`}
+      title={`${item.timestamp}`}
       description={`${item.description} ${index + 1}`}
       accessoryLeft={renderItemIcon}
       accessoryRight={renderItemAccessory}
@@ -47,11 +48,10 @@ export const HomeScreen = ({navigation}) => {
   );
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/time')
+    fetch('http://localhost:5000/api/measurements')
       .then(res => res.json())
-      .then(data => {
-        setCurrentTime(data.time);
-      });
+      .then(json => setData(json))
+      .catch(error => console.error(error));
   }, []);
 
   return (
