@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Button,
   Icon,
@@ -6,6 +6,7 @@ import {
   Layout,
   List,
   ListItem,
+  Text,
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
@@ -18,6 +19,7 @@ const data = new Array(8).fill({
 });
 
 export const HomeScreen = ({navigation}) => {
+  const [currentTime, setCurrentTime] = useState(0);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
 
   const MenuAction = () => (
@@ -44,6 +46,14 @@ export const HomeScreen = ({navigation}) => {
     />
   );
 
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/time')
+      .then(res => res.json())
+      .then(data => {
+        setCurrentTime(data.time);
+      });
+  }, []);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <TopNavigation
@@ -56,7 +66,16 @@ export const HomeScreen = ({navigation}) => {
         style={{
           flex: 1,
         }}>
+        {/* <Text>The current time is {currentTime}.</Text> */}
         <List data={data} renderItem={renderItem} />
+        <Button
+          style={{
+            margin: 30,
+          }}
+          onPress={() => navigation.navigate('Neue Messung')}>
+          {' '}
+          Neue Messung
+        </Button>
       </Layout>
     </SafeAreaView>
   );
