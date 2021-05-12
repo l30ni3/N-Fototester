@@ -266,6 +266,14 @@ PODS:
     - React-jsi (= 0.64.0)
     - React-perflogger (= 0.64.0)
   - React-jsinspector (0.64.0)
+  - react-native-camera (3.43.8):
+    - React-Core
+    - react-native-camera/RCT (= 3.43.8)
+    - react-native-camera/RN (= 3.43.8)
+  - react-native-camera/RCT (3.43.8):
+    - React-Core
+  - react-native-camera/RN (3.43.8):
+    - React-Core
   - react-native-flipper (0.88.0):
     - React-Core
   - react-native-image-picker (3.6.0):
@@ -340,6 +348,8 @@ PODS:
     - React
   - RNGestureHandler (1.10.3):
     - React-Core
+  - RNPermissions (3.0.3):
+    - React-Core
   - RNReanimated (1.13.3):
     - React-Core
   - RNScreens (3.1.1):
@@ -387,6 +397,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -404,6 +415,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -457,6 +469,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
   react-native-image-picker:
@@ -491,6 +505,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -529,6 +545,7 @@ SPEC CHECKSUMS:
   React-jsi: 74341196d9547cbcbcfa4b3bbbf03af56431d5a1
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
+  react-native-camera: a22b33e521dbf3f8cd886f79f3aa310f401443d5
   react-native-flipper: 5370d05b398481ee4589099e2e1962aba2e1cb90
   react-native-image-picker: 5bb3325530fd4dc3053a77a73d4f65b6649de820
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
@@ -546,6 +563,7 @@ SPEC CHECKSUMS:
   ReactCommon: cfe2b7fd20e0dbd2d1185cd7d8f99633fbc5ff05
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNPermissions: 034db8a73d562766f990c89abbdeaa5d6e204c67
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f

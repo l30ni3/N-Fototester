@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Alert} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {SafeAreaView, StyleSheet, View, Alert} from 'react-native';
 import {
   Button,
   Divider,
@@ -8,14 +8,16 @@ import {
   Text,
   TopNavigation,
   TopNavigationAction,
-  View,
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {RNCamera} from 'react-native-camera';
+import {useCamera} from 'react-native-camera-hooks';
+// import Permissions from 'react-native-permissions';
 
-const BackIcon = props => <Icon {...props} name="arrow-back" />;
+const BackIcon = <Icon name="arrow-back" />;
+const CameraIcon = <Icon name="camera" />;
 
 export const ImageUpload = ({navigation}) => {
-  const [imageSource, setImageSource] = useState(null);
   const navigateBack = () => {
     navigation.goBack();
   };
@@ -24,58 +26,36 @@ export const ImageUpload = ({navigation}) => {
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
-  function selectImage() {
-    let options = {
-      title: 'You can choose one image',
-      maxWidth: 256,
-      maxHeight: 256,
-      storageOptions: {
-        skipBackup: true,
-      },
-    };
+  let [flash, setFlash] = useState('off');
+  let [zoom, setZoom] = useState(0);
+  let [autoFocus, setAutoFocus] = useState('on');
+  let [depth, setDepth] = useState(0);
+  let [type, setType] = useState('back');
+  let [permission, setPermission] = useState('undetermined');
+  let cameraRef = useRef(null);
+  // useEffect(() => {
+  //   Permissions.check('photo').then(response => {
+  //     // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
+  //     setPermission(response);
+  //   });
+  // }, []);
 
-    launchImageLibrary(options, response => {
-      console.log({response});
-
-      if (response.didCancel) {
-        console.log('User cancelled photo picker');
-        Alert.alert('You did not select any image');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        let source = {uri: response.uri};
-        console.log({source});
-      }
-    });
+  function toggleFlash() {
+    setFlash(flashModeOrder[flash]);
   }
-  function uploadImage() {
-    let options = {
-      maxWidth: 256,
-      maxHeight: 256,
-      storageOptions: {
-        skipBackup: true,
-        saveToPhotos: true,
-      },
-    };
-
-    launchCamera(options, response => {
-      console.log({response});
-
-      if (response.didCancel) {
-        console.log('User cancelled photo picker');
-        Alert.alert('You did not select any image');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        let source = {uri: response.uri};
-        console.log({source});
-      }
-    });
+  function zoomOut() {
+    setZoom(zoom - 0.1 < 0 ? 0 : zoom - 0.1);
   }
+  function zoomIn() {
+    setZoom(zoom + 0.1 > 1 ? 1 : zoom + 0.1);
+  }
+  const takePicture = async () => {
+    if (cameraRef) {
+      const options = {quality: 0.5, base64: true};
+      const data = await cameraRef.current.takePictureAsync(soptions);
+      console.log(data.uri);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -90,21 +70,44 @@ export const ImageUpload = ({navigation}) => {
           flex: 1,
           padding: 20,
         }}>
-        <Button
-          style={{
-            margin: 10,
-          }}
-          onPress={selectImage}>
-          Galerie
-        </Button>
-        <Button
-          style={{
-            margin: 10,
-          }}
-          onPress={uploadImage}>
-          Kamera
-        </Button>
+        <View style={styles.container}>
+          <RNCamera
+            ref={cameraRef}
+            style={styles.preview}
+            type={type}
+            flashMode={flash}
+          />
+          <View
+            style={{
+              flex: 0,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              margin: 20,
+            }}>
+            <Button
+              style={styles.button}
+              onPress={takePicture}
+              accessoryLeft={CameraIcon}
+            />
+          </View>
+        </View>
       </Layout>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: -20,
+    flexDirection: 'column',
+    backgroundColor: 'black',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  button: {
+    borderRadius: 40,
+  },
+});
