@@ -95,9 +95,21 @@ export const ImageUpload = ({navigation}) => {
   };
 
   const handleUploadPhoto = () => {
-    fetch(`${SERVER_URL}/api/upload`, {
+    let localUri =
+      Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri;
+    let filename = localUri.split('/').pop();
+    // Infer the type of the image
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+    let formData = new FormData();
+    formData.append('photo', {uri: localUri, name: filename, type: type});
+    fetch(`${SERVER_URL}/api/images/upload`, {
       method: 'POST',
-      body: createFormData(photo, {userId: '123'}),
+      body: formData,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
     })
       .then(response => response.json())
       .then(response => {
@@ -122,10 +134,7 @@ export const ImageUpload = ({navigation}) => {
         }}>
         {photo ? (
           <View style={styles.container}>
-            <Image
-              source={{uri: photo.uri}}
-              style={{width: 300, height: 300}}
-            />
+            <Image source={{uri: photo.uri}} style={styles.preview} />
           </View>
         ) : (
           <View style={styles.container}>
@@ -188,7 +197,7 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
   button: {
     margin: 20,

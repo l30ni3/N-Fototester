@@ -12,12 +12,6 @@ import {
 } from '@ui-kitten/components';
 import {SafeAreaView} from 'react-native';
 
-// to be replaced with real data
-// const data = new Array(8).fill({
-//   title: 'Title for Item',
-//   description: 'Description for Item',
-// });
-
 export const HomeScreen = ({navigation}) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [data, setData] = useState([]);
@@ -31,28 +25,38 @@ export const HomeScreen = ({navigation}) => {
   );
 
   const renderItemAccessory = props => (
-    <Button size="tiny" onPress={() => navigation.navigate('Details')}>
+    <Button
+      size="tiny"
+      onPress={() => {
+        navigation.navigate('Details', {
+          itemId: props.itemId,
+        });
+      }}>
       Details
     </Button>
   );
 
-  const renderItemIcon = props => <Icon {...props} name="person" />;
-
   const renderItem = ({item, index}) => (
     <ListItem
-      title={`${item.timestamp}`}
-      description={`${item.description} ${index + 1}`}
-      accessoryLeft={renderItemIcon}
-      accessoryRight={renderItemAccessory}
+      title={`${index + 1}`}
+      description={`${item.pic_date} `}
+      // accessoryRight={renderItemAccessory}
+      accessoryRight={props =>
+        renderItemAccessory({...{itemId: item.id}, ...props})
+      }
     />
   );
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/measurements')
+    fetch('http://localhost:5000/api/images')
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
   }, []);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <SafeAreaView style={{flex: 1}}>

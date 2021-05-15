@@ -79,15 +79,9 @@ PODS:
     - RNPermissions
   - Permission-Microphone (3.0.3):
     - RNPermissions
-  - Permission-Motion (3.0.3):
-    - RNPermissions
-  - Permission-Notifications (3.0.3):
-    - RNPermissions
   - Permission-PhotoLibrary (3.0.3):
     - RNPermissions
   - Permission-PhotoLibraryAddOnly (3.0.3):
-    - RNPermissions
-  - Permission-StoreKit (3.0.3):
     - RNPermissions
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -403,11 +397,8 @@ DEPENDENCIES:
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
   - Permission-MediaLibrary (from `../node_modules/react-native-permissions/ios/MediaLibrary`)
   - Permission-Microphone (from `../node_modules/react-native-permissions/ios/Microphone`)
-  - Permission-Motion (from `../node_modules/react-native-permissions/ios/Motion`)
-  - Permission-Notifications (from `../node_modules/react-native-permissions/ios/Notifications`)
   - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary`)
   - Permission-PhotoLibraryAddOnly (from `../node_modules/react-native-permissions/ios/PhotoLibraryAddOnly`)
-  - Permission-StoreKit (from `../node_modules/react-native-permissions/ios/StoreKit`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -477,16 +468,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-permissions/ios/MediaLibrary"
   Permission-Microphone:
     :path: "../node_modules/react-native-permissions/ios/Microphone"
-  Permission-Motion:
-    :path: "../node_modules/react-native-permissions/ios/Motion"
-  Permission-Notifications:
-    :path: "../node_modules/react-native-permissions/ios/Notifications"
   Permission-PhotoLibrary:
     :path: "../node_modules/react-native-permissions/ios/PhotoLibrary"
   Permission-PhotoLibraryAddOnly:
     :path: "../node_modules/react-native-permissions/ios/PhotoLibraryAddOnly"
-  Permission-StoreKit:
-    :path: "../node_modules/react-native-permissions/ios/StoreKit"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -577,11 +562,8 @@ SPEC CHECKSUMS:
   Permission-Camera: 6abdb054620b2f6b3bf9e0b3842db246424d4d48
   Permission-MediaLibrary: 3f73ecaee899fc86b35890a2e934d2f91f1f436c
   Permission-Microphone: 4372dde5ea1c078ced685c5805ba5b505ede0395
-  Permission-Motion: 91e7b36db790c4ee9e2f6ba043a8e479818b15af
-  Permission-Notifications: 34f5b65e92cd8e8c14ae0576530832ca72effc3f
   Permission-PhotoLibrary: 577c8246ca03603c915485b20aad855bd8f05334
   Permission-PhotoLibraryAddOnly: 0831c129f31f07f0ab06517146338399501fcc47
-  Permission-StoreKit: 9f66aab1ae51c2f659ad598b8c7ad8cb36cf159e
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 2f8cb5b7533219bf4218a045f92768129cf7050a
   RCTTypeSafety: 512728b73549e72ad7330b92f3d42936f2a4de5b
@@ -618,6 +600,6 @@ SPEC CHECKSUMS:
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 0a5e1637108cec949de6f7879705f672c0b12c83
+PODFILE CHECKSUM: 8dac1f381c3aad02b2b829a1fc3aff466b5d4240
 
 COCOAPODS: 1.10.1

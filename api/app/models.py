@@ -1,4 +1,6 @@
 from app import db
+from datetime import datetime
+from base64 import b64encode
 
 
 class Measurement(db.Model):
@@ -24,3 +26,30 @@ class Measurement(db.Model):
         for field in ['timestamp', 'image', 'hue_circular_mean', 'hue_circular_std', 'hue_median']:
             if field in data:
                 setattr(self, field, data[field])
+
+
+class File(db.Model):
+    id = db.Column(db.Integer,  primary_key=True)
+    uri = db.Column(db.String(128))
+    name = db.Column(db.String(128))
+    type = db.Column(db.String(128))
+    data = db.Column(db.LargeBinary)
+    pic_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'uri': self.uri,
+            'name': self.name,
+            'type': self.type,
+            'date': self.pic_date,
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['name', 'pic_date']:
+            if field in data:
+                setattr(self, field, data[field])
+
+    def __repr__(self):
+        return f'Name: {self.name} created on: {self.pic_date}'
