@@ -2,10 +2,14 @@ from flask import jsonify, request, url_for, abort, flash, redirect
 from app import db
 from app.models import File
 from app.views import bp
-import urllib.request
 import os
 from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
+from io import BytesIO
+from flask import send_file
+from base64 import b64encode
+import numpy as np
+from plantcv import plantcv as pcv
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'static/uploads/')
@@ -25,10 +29,70 @@ def upload():
         filename = secure_filename(file.filename)
         file.save(os.path.join(UPLOAD_FOLDER, filename))
         print('upload_image filename: ' + filename)
-        flash('Image successfully uploaded')
+
+        # Read image
+        img, path, filename = pcv.readimage(
+            os.path.join(UPLOAD_FOLDER, filename))
+
+        mask, masked_img = pcv.threshold.custom_range(
+            img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
+
+        binary_img = pcv.median_blur(gray_img=mask, ksize=10)
+
+        mask2 = pcv.fill(bin_img=binary_img, size=200)
+
+        # Identify objects
+        id_objects, obj_hierarchy = pcv.find_objects(img, mask2)
+
+        # Get size of image
+        h, w, c = img.shape
+
+        # Define ROI
+        roi1, roi_hierarchy = pcv.roi.rectangle(
+            img=img, x=0, y=h/8*3, h=h/4, w=w)
+
+        # Decide which objects to keep
+        roi_objects, hierarchy3, kept_mask, obj_area = pcv.roi_objects(img=img, roi_contour=roi1,
+                                                                       roi_hierarchy=roi_hierarchy,
+                                                                       object_contour=id_objects,
+                                                                       obj_hierarchy=obj_hierarchy,
+                                                                       roi_type='partial')
+
+        # Object combine kept objects
+        obj, mask2 = pcv.object_composition(
+            img=img, contours=roi_objects, hierarchy=hierarchy3)
+
+        # Determine color properties: Histograms, Color Slices, output color analyzed histogram (optional)
+        color_histogram = pcv.analyze_color(
+            rgb_img=img, mask=mask2, hist_plot_type=None, label="default")
+
+        # Access data stored out from analyze_color
+        print(pcv.outputs.observations['default']
+              ['hue_circular_mean']['value'])
+
+        hue_circular_mean = pcv.outputs.observations['default']
+        ['hue_circular_mean']['value']
+
+        # Access data stored out from analyze_color
+        print(pcv.outputs.observations['default']
+              ['hue_circular_std']['value'])
+
+        hue_circular_std = pcv.outputs.observations['default']
+        ['hue_circular_std']['value']
+
+        # Access data stored out from analyze_color
+        print(pcv.outputs.observations['default']
+              ['hue_median']['value'])
+
+        hue_median = pcv.outputs.observations['default']
+        ['hue_median']['value']
+
+        # Write shape data to results file
+        # pcv.outputs.save_results(filename='results.json')
     else:
         flash('Allowed image types are - png, jpg, jpeg, gif')
 
+    # tbd: send data to db
     data = file.read()
     newFile = File(name=file.filename, data=data)
     db.session.add(newFile)
@@ -37,41 +101,30 @@ def upload():
     return ({}, 204)
 
 
-@bp.route('/images', methods=['GET'])
+@ bp.route('/images', methods=['GET'])
 def get_images():
     images_list = File.query.all()
     images = []
 
     for img in images_list:
-        images.append({'id': img.id, 'name': img.name,
-                      'pic_date': img.pic_date})
+        images.append(img.to_dict())
     return jsonify(images)
 
 
-@bp.route('/images/<int:image_id>')
+@ bp.route('/images/<int:image_id>')
 def get_image(image_id):
     image = jsonify(File.query.get_or_404(image_id).to_dict())
-    print(image)
     return image
 
 
-@bp.route('/update/<int:pic_id>', methods=['GET', 'POST'])
-def update(pic_id):
-
-    pic = File.query.get(pic_id)
-
-    if request.method == 'POST':
-        pic.location = request.form['location']
-        pic.text = request.form['text']
-
-        db.session.commit()
-        flash(f'{pic.name} Has been updated')
-        return redirect(url_for('index'))
-    return render_template('update.html', pic=pic)
+@ bp.route('/images/download/<int:image_id>')
+def download(image_id):
+    image = File.query.filter_by(id=image_id).first()
+    return send_file(BytesIO(image.data), attachment_filename='image.jpg', as_attachment=True)
 
 
 # Delete
-@bp.route('/<int:pic_id>/delete', methods=['GET', 'POST'])
+@ bp.route('/<int:pic_id>/delete', methods=['GET', 'POST'])
 def delete(pic_id):
 
     del_pic = File.query.get(pic_id)
@@ -83,4 +136,4 @@ def delete(pic_id):
             db.session.commit()
             flash('Picture deleted from Database')
             return redirect(url_for('index'))
-    return redirect(url_for('index'))
+    return ({}, 204)

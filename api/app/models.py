@@ -1,6 +1,5 @@
 from app import db
 from datetime import datetime
-from base64 import b64encode
 
 
 class Measurement(db.Model):
@@ -42,6 +41,7 @@ class File(db.Model):
             'uri': self.uri,
             'name': self.name,
             'type': self.type,
+            # 'data': self.data,
             'date': self.pic_date,
         }
         return data

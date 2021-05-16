@@ -8,6 +8,7 @@ import {
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
+var RNFS = require('react-native-fs');
 
 const BackIcon = props => <Icon {...props} name="arrow-back" />;
 
@@ -30,7 +31,7 @@ export const DetailsScreen = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-    console.log(data.name);
+    console.log('file://', RNFS.TemporaryDirectoryPath, data.name);
   }, [data]);
 
   return (
@@ -51,7 +52,11 @@ export const DetailsScreen = ({route, navigation}) => {
           <>
             <Text>Daten:</Text>
             <View style={styles.container}>
-              {/* <Image source={{uri: photo.uri}} style={styles.preview} /> */}
+              <Image
+                source={{
+                  uri: 'file://' + RNFS.TemporaryDirectoryPath + data.name,
+                }}
+              />
             </View>
           </>
         ) : (
