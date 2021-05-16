@@ -66,29 +66,27 @@ def upload():
         color_histogram = pcv.analyze_color(
             rgb_img=img, mask=mask2, hist_plot_type=None, label="default")
 
+        print(pcv.__version__)
+
         # Access data stored out from analyze_color
         print(pcv.outputs.observations['default']
               ['hue_circular_mean']['value'])
 
-        hue_circular_mean = pcv.outputs.observations['default']
-        ['hue_circular_mean']['value']
+        hue_circular_mean = pcv.outputs.observations['default']['hue_circular_mean']['value']
 
         # Access data stored out from analyze_color
-        print(pcv.outputs.observations['default']
-              ['hue_circular_std']['value'])
+        print(pcv.outputs.observations['default']['hue_circular_std']['value'])
 
-        hue_circular_std = pcv.outputs.observations['default']
-        ['hue_circular_std']['value']
+        hue_circular_std = pcv.outputs.observations['default']['hue_circular_std']['value']
 
         # Access data stored out from analyze_color
-        print(pcv.outputs.observations['default']
-              ['hue_median']['value'])
+        print(pcv.outputs.observations['default']['hue_median']['value'])
 
-        hue_median = pcv.outputs.observations['default']
-        ['hue_median']['value']
+        hue_median = pcv.outputs.observations['default']['hue_median']['value']
 
         # Write shape data to results file
-        # pcv.outputs.save_results(filename='results.json')
+        pcv.outputs.save_results(
+            filename=os.path.join(UPLOAD_FOLDER, 'results.json'))
     else:
         flash('Allowed image types are - png, jpg, jpeg, gif')
 
