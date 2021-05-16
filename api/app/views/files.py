@@ -12,7 +12,7 @@ import numpy as np
 from plantcv import plantcv as pcv
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'static/uploads/')
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'tmp/')
 
 
 def allowed_file(filename):
@@ -27,12 +27,13 @@ def upload():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(UPLOAD_FOLDER, filename))
+        pre, ext = os.path.splitext(filename)
+        file.save(os.path.join(UPLOAD_FOLDER, 'current' + ext))
         print('upload_image filename: ' + filename)
 
         # Read image
         img, path, filename = pcv.readimage(
-            os.path.join(UPLOAD_FOLDER, filename))
+            os.path.join(UPLOAD_FOLDER, 'current' + ext))
 
         mask, masked_img = pcv.threshold.custom_range(
             img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
@@ -65,8 +66,6 @@ def upload():
         # Determine color properties: Histograms, Color Slices, output color analyzed histogram (optional)
         color_histogram = pcv.analyze_color(
             rgb_img=img, mask=mask2, hist_plot_type=None, label="default")
-
-        print(pcv.__version__)
 
         # Access data stored out from analyze_color
         print(pcv.outputs.observations['default']
