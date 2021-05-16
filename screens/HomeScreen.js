@@ -39,7 +39,7 @@ export const HomeScreen = ({navigation}) => {
   const renderItem = ({item, index}) => (
     <ListItem
       title={`${index + 1}`}
-      description={`${item.pic_date} `}
+      description={`${item.name} `}
       // accessoryRight={renderItemAccessory}
       accessoryRight={props =>
         renderItemAccessory({...{itemId: item.id}, ...props})

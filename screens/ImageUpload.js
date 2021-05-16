@@ -1,13 +1,20 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, View, Image, Platform} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Image,
+  Platform,
+  Text,
+} from 'react-native';
 import {
   Button,
   Divider,
   Icon,
   Layout,
-  Text,
   TopNavigation,
   TopNavigationAction,
+  Spinner,
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {RNCamera} from 'react-native-camera';
@@ -33,10 +40,8 @@ const createFormData = (photo, body = {}) => {
 
 export const ImageUpload = ({navigation}) => {
   const [photo, setPhoto] = useState(null);
-  const [flash, setFlash] = useState('off');
-  const [type, setType] = useState('back');
+  const [isLoading, setIsLoading] = useState(false);
   const [permission, setPermission] = useState('undetermined');
-  const cameraRef = useRef(null);
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
   const CameraIcon = props => <Icon {...props} name="camera" />;
@@ -54,6 +59,7 @@ export const ImageUpload = ({navigation}) => {
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
+  // todo properly ask for permissions
   useEffect(() => {
     Permissions.check('photo').then(response => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
@@ -61,16 +67,10 @@ export const ImageUpload = ({navigation}) => {
     });
   }, []);
 
-  // const takePicture = async () => {
-  //   if (cameraRef) {
-  //     const options = {quality: 0.5, base64: true};
-  //     const response = await cameraRef.current.takePictureAsync(options);
-  //     //console.log(response);
-  //     if (response) {
-  //       setPhoto(response);
-  //     }
-  //   }
-  // };
+  // todo properly ask for permissions
+  useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading]);
 
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
@@ -95,6 +95,7 @@ export const ImageUpload = ({navigation}) => {
   };
 
   const handleUploadPhoto = () => {
+    setIsLoading(true);
     let localUri =
       Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri;
     let filename = localUri.split('/').pop();
@@ -111,9 +112,9 @@ export const ImageUpload = ({navigation}) => {
         'Content-Type': 'multipart/form-data',
       },
     })
-      .then(response => response.json())
       .then(response => {
         console.log('response', response);
+        setIsLoading(false);
       })
       .catch(error => {
         console.log('error', error);
@@ -132,57 +133,61 @@ export const ImageUpload = ({navigation}) => {
         style={{
           flex: 1,
         }}>
-        {photo ? (
-          <View style={styles.container}>
-            <Image source={{uri: photo.uri}} style={styles.preview} />
-          </View>
+        {!isLoading ? (
+          <>
+            {photo ? (
+              <View style={styles.container}>
+                <Image source={{uri: photo.uri}} style={styles.preview} />
+              </View>
+            ) : (
+              <View style={styles.container}></View>
+            )}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}>
+              {photo ? (
+                <>
+                  <Button
+                    style={styles.button}
+                    onPress={handleDeletePhoto}
+                    accessoryRight={CloseIcon}>
+                    Verwerfen
+                  </Button>
+                  <Button
+                    style={styles.button}
+                    onPress={handleUploadPhoto}
+                    accessoryRight={NextIcon}>
+                    Verwenden
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    style={styles.button}
+                    onPress={handleChoosePhoto}
+                    accessoryRight={UploadIcon}>
+                    Aus Gallerie
+                  </Button>
+                  <Button
+                    style={styles.button}
+                    onPress={handleTakePhoto}
+                    accessoryRight={CameraIcon}>
+                    Neues Foto
+                  </Button>
+                </>
+              )}
+            </View>
+          </>
         ) : (
-          <View style={styles.container}>
-            {/* <RNCamera
-              ref={cameraRef}
-              style={styles.preview}
-              type={type}
-              flashMode={flash}
-            /> */}
+          <View style={styles.spinner}>
+            <Spinner size="large" />
+            <Text style={styles.spinnertext}>
+              Die Bilddaten werden verarbeitet ...{' '}
+            </Text>
           </View>
         )}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}>
-          {photo ? (
-            <>
-              <Button
-                style={styles.button}
-                onPress={handleDeletePhoto}
-                accessoryRight={CloseIcon}>
-                Verwerfen
-              </Button>
-              <Button
-                style={styles.button}
-                onPress={handleUploadPhoto}
-                accessoryRight={NextIcon}>
-                Verwenden
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                style={styles.button}
-                onPress={handleChoosePhoto}
-                accessoryRight={UploadIcon}>
-                Aus Gallerie
-              </Button>
-              <Button
-                style={styles.button}
-                onPress={handleTakePhoto}
-                accessoryRight={CameraIcon}>
-                Neues Foto
-              </Button>
-            </>
-          )}
-        </View>
       </Layout>
     </SafeAreaView>
   );
@@ -200,6 +205,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
+    margin: 20,
+  },
+  spinner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  spinnertext: {
+    color: 'white',
     margin: 20,
   },
 });
