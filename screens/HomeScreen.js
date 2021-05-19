@@ -13,7 +13,6 @@ import {
 import {SafeAreaView} from 'react-native';
 
 export const HomeScreen = ({navigation}) => {
-  const [currentTime, setCurrentTime] = useState(0);
   const [data, setData] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
 
@@ -28,11 +27,11 @@ export const HomeScreen = ({navigation}) => {
     <Button
       size="tiny"
       onPress={() => {
-        navigation.navigate('Details', {
+        navigation.navigate('Ergebnis', {
           itemId: props.itemId,
         });
       }}>
-      Details
+      Anzeigen
     </Button>
   );
 
@@ -48,7 +47,7 @@ export const HomeScreen = ({navigation}) => {
   );
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/images')
+    fetch('http://localhost:5000/api/results')
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));

@@ -22,17 +22,19 @@ import Permissions from 'react-native-permissions';
 
 const SERVER_URL = 'http://localhost:5000';
 
-const createFormData = (photo, body = {}) => {
+const createFormData = photo => {
+  let localUri =
+    Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri;
+  let filename = localUri.split('/').pop();
+  // Infer the type of the image
+  let match = /\.(\w+)$/.exec(filename);
+  let type = match ? `image/${match[1]}` : `image`;
+
   const data = new FormData();
-
   data.append('photo', {
-    name: photo.fileName,
-    type: photo.type,
-    uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-  });
-
-  Object.keys(body).forEach(key => {
-    data.append(key, body[key]);
+    name: filename,
+    type: type,
+    uri: localUri,
   });
 
   return data;
@@ -41,6 +43,7 @@ const createFormData = (photo, body = {}) => {
 export const ImageUpload = ({navigation}) => {
   const [photo, setPhoto] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [itemId, setItemId] = useState(null);
   const [permission, setPermission] = useState('undetermined');
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
@@ -66,6 +69,14 @@ export const ImageUpload = ({navigation}) => {
       setPermission(response);
     });
   }, []);
+
+  useEffect(() => {
+    itemId
+      ? navigation.navigate('Ergebnis', {
+          itemId: itemId,
+        })
+      : null;
+  }, [itemId]);
 
   // todo properly ask for permissions
   useEffect(() => {
@@ -104,20 +115,23 @@ export const ImageUpload = ({navigation}) => {
     let type = match ? `image/${match[1]}` : `image`;
     let formData = new FormData();
     formData.append('photo', {uri: localUri, name: filename, type: type});
-    fetch(`${SERVER_URL}/api/images/upload`, {
+    fetch(`${SERVER_URL}/api/upload`, {
       method: 'POST',
       body: formData,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
+      // headers: {
+      //   Accept: 'application/json',
+      //   'Content-Type': 'multipart/form-data',
+      // },
     })
+      .then(response => response.text())
       .then(response => {
-        console.log('response', response);
+        console.log('upload succes', response);
+        setItemId(response);
         setIsLoading(false);
+        setPhoto(null);
       })
       .catch(error => {
-        console.log('error', error);
+        console.log('upload error', error);
       });
   };
 
