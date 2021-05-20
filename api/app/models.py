@@ -4,6 +4,8 @@ from datetime import datetime
 
 class Result(db.Model):
     id = db.Column(db.Integer,  primary_key=True)
+    # date = db.Column(
+    #     db.DateTime, default=datetime.utcnow)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     name = db.Column(db.String(128))
     type = db.Column(db.String(128))

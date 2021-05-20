@@ -11,10 +11,13 @@ import {
   TopNavigationAction,
 } from '@ui-kitten/components';
 import {SafeAreaView} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
+import Moment from 'react-moment';
 
 export const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
+  const isFocused = useIsFocused();
 
   const MenuAction = () => (
     <TopNavigationAction
@@ -24,22 +27,36 @@ export const HomeScreen = ({navigation}) => {
   );
 
   const renderItemAccessory = props => (
-    <Button
-      size="tiny"
-      onPress={() => {
-        navigation.navigate('Ergebnis', {
-          itemId: props.itemId,
-        });
-      }}>
-      Anzeigen
-    </Button>
+    <>
+      <Button
+        size="tiny"
+        onPress={() => {
+          navigation.navigate('Ergebnis', {
+            itemId: props.itemId,
+          });
+        }}>
+        Anzeigen
+      </Button>
+      <Icon
+        {...props}
+        onPress={() => {
+          fetch(`http://localhost:5000/api/results/${props.itemId}/delete`)
+            .then(res => res.json())
+            .then(json => setData(json))
+            .catch(error => console.error(error));
+        }}
+        name="trash-outline"
+      />
+    </>
   );
 
   const renderItem = ({item, index}) => (
     <ListItem
-      title={`${index + 1}`}
-      description={`${item.name} `}
-      // accessoryRight={renderItemAccessory}
+      title={
+        <Moment element={Text} fromNow>
+          {item.date}
+        </Moment>
+      }
       accessoryRight={props =>
         renderItemAccessory({...{itemId: item.id}, ...props})
       }
@@ -52,6 +69,13 @@ export const HomeScreen = ({navigation}) => {
       .then(json => setData(json))
       .catch(error => console.error(error));
   }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/results')
+      .then(res => res.json())
+      .then(json => setData(json))
+      .catch(error => console.error(error));
+  }, [isFocused]);
 
   useEffect(() => {
     console.log(data);
@@ -69,7 +93,6 @@ export const HomeScreen = ({navigation}) => {
         style={{
           flex: 1,
         }}>
-        {/* <Text>The current time is {currentTime}.</Text> */}
         <List data={data} renderItem={renderItem} />
         <Button
           style={{

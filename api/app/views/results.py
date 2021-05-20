@@ -103,7 +103,7 @@ def upload():
 
 
 @ bp.route('/results', methods=['GET'])
-def get_images():
+def get_results():
     results_list = Result.query.all()
     results = []
 
@@ -113,7 +113,7 @@ def get_images():
 
 
 @ bp.route('/results/<int:id>')
-def get_image(id):
+def get_result(id):
     image = jsonify(Result.query.get_or_404(id).to_dict())
     return image
 
@@ -122,5 +122,13 @@ def get_image(id):
 @ bp.route('/results/<int:id>/delete', methods=['GET', 'POST'])
 def delete(id):
 
-    del_pic = Result.query.get(id)
-    return ({}, 204)
+    item = Result.query.get(id)
+    db.session.delete(item)
+    db.session.commit()
+
+    results_list = Result.query.all()
+    results = []
+
+    for res in results_list:
+        results.append(res.to_dict())
+    return jsonify(results)
