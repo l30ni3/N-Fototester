@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
+  Avatar,
   Button,
   Icon,
   Divider,
@@ -16,7 +17,10 @@ import Moment from 'react-moment';
 
 export const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([]);
+  const [responseBlob, setResponseBlob] = useState([]);
+  const [blobData, setBlobData] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
+
   const isFocused = useIsFocused();
 
   const MenuAction = () => (
@@ -52,6 +56,7 @@ export const HomeScreen = ({navigation}) => {
 
   const renderItem = ({item, index}) => (
     <ListItem
+      // accessoryLeft={props => renderAvatar({...{itemId: item.id}, ...props})}
       title={
         <Moment element={Text} fromNow>
           {item.date}
@@ -80,6 +85,21 @@ export const HomeScreen = ({navigation}) => {
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  // const renderAvatar = props => {
+  //   fetch(`http://localhost:5000/api/results/avatar/${props.itemId}`)
+  //     .then(res => setResponseBlob(res.blob()))
+  //     .catch(error => console.error(error));
+
+  //   var reader = new FileReader();
+  //   reader.onload = () => {
+  //     console.log(reader.result);
+  //     setBlobData(reader.result);
+  //     reader.readAsDataURL(responseBlob);
+  //   };
+
+  //   return <Avatar source={{uri: 'data:image/jpeg;base64,' + blobData}} />;
+  // };
 
   return (
     <SafeAreaView style={{flex: 1}}>

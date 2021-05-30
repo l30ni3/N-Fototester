@@ -25,6 +25,7 @@ export const ResultScreen = ({route, navigation}) => {
   const {itemId} = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [avatar, setAvatar] = useState('');
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
 
@@ -55,9 +56,21 @@ export const ResultScreen = ({route, navigation}) => {
         style={{
           flex: 1,
         }}>
+        <View style={styles.image_container}>
+          {/* <Image style={styles.image} source={{uri: `${data.avatar}`}} /> */}
+          {/* <Image
+            style={styles.image}
+            source={require(`../api/app/views/avatars/${data.avatar}`)}
+          /> */}
+        </View>
         {!isLoading ? (
           <View style={styles.container}>
-            <Text style={styles.spinnertext}>{data.hue_median}</Text>
+            <Text style={styles.text_bold}>Hue Circular Mean</Text>
+            <Text style={styles.text}>{data.hue_circular_mean}</Text>
+            <Text style={styles.text_bold}>Hue Circular Std</Text>
+            <Text style={styles.text}>{data.hue_circular_std}</Text>
+            <Text style={styles.text_bold}>Hue Median</Text>
+            <Text style={styles.text}>{data.hue_median}</Text>
           </View>
         ) : (
           <View style={styles.spinner}>
@@ -77,7 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     flexDirection: 'column',
-    backgroundColor: 'black',
+    padding: 40,
   },
   preview: {
     flex: 1,
@@ -94,5 +107,25 @@ const styles = StyleSheet.create({
   spinnertext: {
     color: 'white',
     margin: 20,
+  },
+  text: {
+    marginBottom: 10,
+    color: 'white',
+  },
+  text_bold: {
+    fontWeight: '700',
+    color: 'white',
+  },
+  image_container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  image: {
+    backgroundColor: 'red',
+    borderRadius: 100,
+    height: 150,
+    width: 150,
   },
 });

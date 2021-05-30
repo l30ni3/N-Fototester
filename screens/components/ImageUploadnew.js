@@ -94,7 +94,7 @@ export const ImageUpload = ({navigation}) => {
 
   const handleChoosePhoto = () => {
     launchImageLibrary({noData: true}, response => {
-      console.log(response);
+      console.log('launchImageLibrary response: ', response);
       if (response) {
         setPhoto(response);
       }

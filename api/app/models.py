@@ -4,13 +4,10 @@ from datetime import datetime
 
 class Result(db.Model):
     id = db.Column(db.Integer,  primary_key=True)
-    # date = db.Column(
-    #     db.DateTime, default=datetime.utcnow)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     name = db.Column(db.String(128))
     type = db.Column(db.String(128))
-    data = db.Column(db.LargeBinary)
-    color_histogram = db.Column(db.LargeBinary)
+    avatar = db.Column(db.String(128))
     hue_circular_mean = db.Column(db.Integer)
     hue_circular_std = db.Column(db.Integer)
     hue_median = db.Column(db.Integer)
@@ -21,7 +18,7 @@ class Result(db.Model):
             'date': self.date,
             'name': self.name,
             'type': self.type,
-            # 'data': self.data,
+            'avatar': self.avatar,
             'hue_circular_mean': self.hue_circular_mean,
             'hue_circular_std': self.hue_circular_std,
             'hue_median': self.hue_median
@@ -29,7 +26,7 @@ class Result(db.Model):
         return data
 
     def from_dict(self, data):
-        for field in ['id', 'date', 'name', 'type', 'hue_circular_mean', 'hue_circular_std', 'hue_median']:
+        for field in ['id', 'date', 'name', 'type', 'avatar', 'hue_circular_mean', 'hue_circular_std', 'hue_median']:
             if field in data:
                 setattr(self, field, data[field])
 

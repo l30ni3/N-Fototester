@@ -78,14 +78,8 @@ export const ImageUpload = ({navigation}) => {
       : null;
   }, [itemId]);
 
-  // todo properly ask for permissions
-  useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading]);
-
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
-      // console.log(response);
       if (response) {
         setPhoto(response);
       }
@@ -93,10 +87,27 @@ export const ImageUpload = ({navigation}) => {
   };
 
   const handleChoosePhoto = () => {
-    launchImageLibrary({noData: true}, response => {
-      // console.log(response);
-      if (response) {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+    };
+    launchImageLibrary({options}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+        setPhoto(null);
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+        setPhoto(null);
+      } else {
         setPhoto(response);
+        // const source = {uri: response.uri};
+
+        // // You can also display the image using data:
+        // // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        // this.setState({
+        //   avatarSource: source,
+        // });
       }
     });
   };
@@ -109,12 +120,15 @@ export const ImageUpload = ({navigation}) => {
     setIsLoading(true);
     let localUri =
       Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri;
-    let filename = localUri.split('/').pop();
-    // Infer the type of the image
+    let filename = photo.fileName;
     let match = /\.(\w+)$/.exec(filename);
     let type = match ? `image/${match[1]}` : `image`;
     let formData = new FormData();
-    formData.append('photo', {uri: localUri, name: filename, type: type});
+    formData.append('photo', {
+      uri: localUri,
+      name: filename,
+      type: type,
+    });
     fetch(`${SERVER_URL}/api/upload`, {
       method: 'POST',
       body: formData,

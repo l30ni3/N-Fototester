@@ -5,11 +5,13 @@ from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
+from flask_avatars import Avatars
 
 db = SQLAlchemy()
 migrate = Migrate()
 moment = Moment()
 babel = Babel()
+avatars = Avatars()
 
 
 def create_app(config_class=Config):
@@ -20,6 +22,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     moment.init_app(app)
     babel.init_app(app)
+    avatars.init_app(app)
 
     from app.views import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')

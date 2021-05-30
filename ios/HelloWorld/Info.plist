@@ -57,8 +57,6 @@
     <string>N-Fototester would like to use your camera</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>N-Fototester would like to save photos to your photo gallery</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>N-Fototester would like to save photos to your photo gallery</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>N-Fototester would like to use your microphone (for videos)</string>
 </dict>
