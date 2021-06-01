@@ -1,4 +1,4 @@
-from flask import jsonify, request, flash, redirect, send_from_directory, session
+from flask import jsonify, request, flash, redirect, send_from_directory, current_app
 from app import db, avatars
 from app.models import Result
 from app.views import bp
@@ -11,184 +11,114 @@ import base64
 import numpy as np
 from plantcv import plantcv as pcv
 import json
+from PIL import Image
 
-# TODO: import app.config for constants
-basedir = os.path.abspath(os.path.dirname(__file__))
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-AVATARS_SAVE_PATH = os.path.join(basedir, 'avatars')
-# UPLOAD_FOLDER = os.path.join(basedir, 'tmp')
-TMP_FOLDER = join(dirname(realpath(__file__)), 'tmp/')
-AVATAR_FOLDER = os.path.join(basedir, 'avatars')
+# TODO add allowed extensions
 
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @bp.route('/upload', methods=['POST'])
+def upload():
+    # request uploaded file from request object
+    file = request.files['photo']
+    filename = file.filename
+    image = Image.open(file)
+    MAX_SIZE = (200, 200)
+    image.thumbnail(MAX_SIZE)
+    image.save(os.path.join(
+        current_app.config['AVATARS_SAVE_PATH'], filename))
+    # get color values from image data
+    hm, hcm, hcs = read_image_data(filename)
+    # send to db
+    newFile = Result(name=filename,
+                     hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
+    db.session.add(newFile)
+    db.session.commit()
+    return jsonify(newFile.id)
 # def upload():
+#     # request uploaded file from request object
 #     file = request.files['photo']
-#     # TODO compress image before safe as avatar
+#     filename = file.filename
+#     # save to file storage
 #     avatar_filename = avatars.save_avatar(file)
-#     if file.filename == '':
-#         print('No image selected for uploading')
-#         return redirect(request.url)
-#     if file and allowed_file(file.filename):
-#         filename = secure_filename(file.filename)
-#         pre, ext = os.path.splitext(filename)
-#         file.save(os.path.join(UPLOAD_FOLDER, 'current' + ext))
-#         print('upload_image filename: ' + filename)
-#         # Read image
-#         img, path, filename = pcv.readimage(
-#             os.path.join(UPLOAD_FOLDER, 'current' + ext))
-#         mask, masked_img = pcv.threshold.custom_range(
-#             img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
-#         binary_img = pcv.median_blur(gray_img=mask, ksize=10)
-#         mask2 = pcv.fill(bin_img=binary_img, size=200)
-#         # Identify objects
-#         id_objects, obj_hierarchy = pcv.find_objects(img, mask2)
-#         # Get size of image
-#         h, w, c = img.shape
-#         # Define ROI
-#         roi1, roi_hierarchy = pcv.roi.rectangle(
-#             img=img, x=0, y=h/8*3, h=h/4, w=w)
-#         # Decide which objects to keep
-#         roi_objects, hierarchy3, kept_mask, obj_area = pcv.roi_objects(img=img, roi_contour=roi1,
-#                                                                        roi_hierarchy=roi_hierarchy,
-#                                                                        object_contour=id_objects,
-#                                                                        obj_hierarchy=obj_hierarchy,
-#                                                                        roi_type='partial')
-#         # Object combine kept objects
-#         obj, mask2 = pcv.object_composition(
-#             img=img, contours=roi_objects, hierarchy=hierarchy3)
-#         # Determine color properties: Histograms, Color Slices, output color analyzed histogram (optional)
-#         color_histogram = pcv.analyze_color(
-#             rgb_img=img, mask=mask2, colorspaces="all", label="default")
-#         # color_histogram.save(os.path.join(UPLOAD_FOLDER, 'histogram'))
-#         # Access data stored out from analyze_color
-#         print(pcv.outputs.observations['default']
-#               ['hue_circular_mean']['value'])
-#         hcm = pcv.outputs.observations['default']['hue_circular_mean']['value']
-#         # Access data stored out from analyze_color
-#         print(pcv.outputs.observations['default']['hue_circular_std']['value'])
-#         hcs = pcv.outputs.observations['default']['hue_circular_std']['value']
-#         # Access data stored out from analyze_color
-#         print(pcv.outputs.observations['default']['hue_median']['value'])
-#         hm = pcv.outputs.observations['default']['hue_median']['value']
-#         # Write shape data to results file
-#         pcv.outputs.save_results(
-#             filename=os.path.join(UPLOAD_FOLDER, 'results.json'))
-#     else:
-#         flash('Allowed image types are - png, jpg, jpeg, gif')
-#     json_file = open(os.path.join(UPLOAD_FOLDER, 'results.json'))
-#     json_data = json.loads(json_file.read())
-#     # to do: add json_data to data column in db
-#     # print(json_data)
-#     data = file.read()
-#     image_string = base64.b64encode(data).decode('ascii')
-#     print("image_string: ", image_string)
-#     # newFile = Result(name=file.filename, data=data, base64=image_string,
-#     #                  hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
-#     newFile = Result(name=file.filename, avatar=avatar_filename,
+#     # get color values from image data
+#     hm, hcm, hcs = read_image_data(avatar_filename)
+#     # send to db
+#     newFile = Result(name=filename,
 #                      hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
 #     db.session.add(newFile)
 #     db.session.commit()
 #     return jsonify(newFile.id)
-def upload():
-    file = request.files['photo']
-    # with open(file.filename, "rb") as image_file:
-    #     encoded_string = base64.b64encode(image_file.read())
-    #     print(encoded_string.decode('utf-8'))
-    if file.filename == '':
-        print('No image selected for uploading')
-        return redirect(request.url)
-    if file.filename == '':
-        flash('No image selected for uploading')
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        pre, ext = os.path.splitext(filename)
-        file.save(os.path.join(TMP_FOLDER, "current" + ext))
-        file.save(os.path.join(AVATAR_FOLDER, file.filename))
 
-        print('upload_image filename: ' + filename)
 
-        # Read image
-        img, path, filename = pcv.readimage(
-            os.path.join(TMP_FOLDER, 'current' + ext))
+def read_image_data(avatar_filename):
+    # Read image
+    img, path, filename = pcv.readimage(os.path.join(
+        current_app.config['AVATARS_SAVE_PATH'], avatar_filename))
 
-        mask, masked_img = pcv.threshold.custom_range(
-            img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
+    mask, masked_img = pcv.threshold.custom_range(
+        img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
 
-        binary_img = pcv.median_blur(gray_img=mask, ksize=10)
+    binary_img = pcv.median_blur(gray_img=mask, ksize=10)
 
-        mask2 = pcv.fill(bin_img=binary_img, size=200)
+    mask2 = pcv.fill(bin_img=binary_img, size=200)
 
-        # Identify objects
-        id_objects, obj_hierarchy = pcv.find_objects(img, mask2)
+    # Identify objects
+    id_objects, obj_hierarchy = pcv.find_objects(img, mask2)
 
-        # Get size of image
-        h, w, c = img.shape
+    # Get size of image
+    h, w, c = img.shape
 
-        # Define ROI
-        roi1, roi_hierarchy = pcv.roi.rectangle(
-            img=img, x=0, y=h/8*3, h=h/4, w=w)
+    # Define ROI
+    roi1, roi_hierarchy = pcv.roi.rectangle(
+        img=img, x=0, y=h/8*3, h=h/4, w=w)
 
-        # Decide which objects to keep
-        roi_objects, hierarchy3, kept_mask, obj_area = pcv.roi_objects(img=img, roi_contour=roi1,
-                                                                       roi_hierarchy=roi_hierarchy,
-                                                                       object_contour=id_objects,
-                                                                       obj_hierarchy=obj_hierarchy,
-                                                                       roi_type='partial')
+    # Decide which objects to keep
+    roi_objects, hierarchy3, kept_mask, obj_area = pcv.roi_objects(img=img, roi_contour=roi1,
+                                                                   roi_hierarchy=roi_hierarchy,
+                                                                   object_contour=id_objects,
+                                                                   obj_hierarchy=obj_hierarchy,
+                                                                   roi_type='partial')
 
-        # Object combine kept objects
-        obj, mask2 = pcv.object_composition(
-            img=img, contours=roi_objects, hierarchy=hierarchy3)
+    # Object combine kept objects
+    obj, mask2 = pcv.object_composition(
+        img=img, contours=roi_objects, hierarchy=hierarchy3)
 
-        # Determine color properties: Histograms, Color Slices, output color analyzed histogram (optional)
-        color_histogram = pcv.analyze_color(
-            rgb_img=img, mask=mask2, colorspaces="all", label="default")
+    # Determine color properties: Histograms, Color Slices, output color analyzed histogram (optional)
+    color_histogram = pcv.analyze_color(
+        rgb_img=img, mask=mask2, colorspaces="all", label="default")
 
-        # color_histogram.save(os.path.join(UPLOAD_FOLDER, 'histogram'))
+    # color_histogram.save(os.path.join(UPLOAD_FOLDER, 'histogram'))
 
-        # Access data stored out from analyze_color
-        print(pcv.outputs.observations['default']
-              ['hue_circular_mean']['value'])
+    # Access data stored out from analyze_color
+    print(pcv.outputs.observations['default']
+          ['hue_circular_mean']['value'])
 
-        hcm = pcv.outputs.observations['default']['hue_circular_mean']['value']
+    hcm = pcv.outputs.observations['default']['hue_circular_mean']['value']
 
-        # Access data stored out from analyze_color
-        print(pcv.outputs.observations['default']['hue_circular_std']['value'])
+    # Access data stored out from analyze_color
+    print(pcv.outputs.observations['default']['hue_circular_std']['value'])
 
-        hcs = pcv.outputs.observations['default']['hue_circular_std']['value']
+    hcs = pcv.outputs.observations['default']['hue_circular_std']['value']
 
-        # Access data stored out from analyze_color
-        print(pcv.outputs.observations['default']['hue_median']['value'])
+    # Access data stored out from analyze_color
+    print(pcv.outputs.observations['default']['hue_median']['value'])
 
-        hm = pcv.outputs.observations['default']['hue_median']['value']
+    hm = pcv.outputs.observations['default']['hue_median']['value']
 
-        # Write shape data to results file
-        pcv.outputs.save_results(
-            filename=os.path.join(TMP_FOLDER, 'results.json'))
-    else:
-        flash('Allowed image types are - png, jpg, jpeg, gif')
+    # # TODO Write shape data to results file
+    # pcv.outputs.save_results(
+    #     filename=os.path.join(TMP_FOLDER, 'results.json'))
 
-    # tbd: send data to db
-    # data = file.read()
-    # newFile = Result(name=file.filename, data=data, hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
-    newFile = Result(name=file.filename,
-                     hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
-    db.session.add(newFile)
-    db.session.commit()
-
-    return jsonify(newFile.id)
-
-# TODO: serve avatar image
+    return hm, hcm, hcs
 
 
 @ bp.route('/avatars/<path:filename>')
 def get_avatar(filename):
-    return send_from_directory(bp.config['AVATARS_SAVE_PATH'], filename)
+    return send_from_directory(current_app.config['AVATARS_SAVE_PATH'], filename)
 
 
 @ bp.route('/results', methods=['GET'])
