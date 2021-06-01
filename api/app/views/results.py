@@ -38,20 +38,6 @@ def upload():
     db.session.add(newFile)
     db.session.commit()
     return jsonify(newFile.id)
-# def upload():
-#     # request uploaded file from request object
-#     file = request.files['photo']
-#     filename = file.filename
-#     # save to file storage
-#     avatar_filename = avatars.save_avatar(file)
-#     # get color values from image data
-#     hm, hcm, hcs = read_image_data(avatar_filename)
-#     # send to db
-#     newFile = Result(name=filename,
-#                      hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
-#     db.session.add(newFile)
-#     db.session.commit()
-#     return jsonify(newFile.id)
 
 
 def read_image_data(avatar_filename):
@@ -109,7 +95,7 @@ def read_image_data(avatar_filename):
 
     hm = pcv.outputs.observations['default']['hue_median']['value']
 
-    # # TODO Write shape data to results file
+    # # TODO Write shape data to results file/db
     # pcv.outputs.save_results(
     #     filename=os.path.join(TMP_FOLDER, 'results.json'))
 
