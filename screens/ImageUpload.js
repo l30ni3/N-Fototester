@@ -9,11 +9,16 @@ import {
 } from 'react-native';
 import {
   Button,
+  Card,
   Divider,
   Icon,
+  IndexPath,
   Layout,
+  Modal,
   TopNavigation,
   TopNavigationAction,
+  Select,
+  SelectItem,
   Spinner,
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -45,6 +50,10 @@ export const ImageUpload = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [itemId, setItemId] = useState(null);
   const [permission, setPermission] = useState('undetermined');
+  const [varietyVisible, setVarietyVisible] = useState(true);
+  const [growthVisible, setGrowthVisible] = useState(false);
+  const [variety, setVariety] = useState(new IndexPath(0));
+  const [growth, setGrowth] = useState(new IndexPath(0));
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
   const CameraIcon = props => <Icon {...props} name="camera" />;
@@ -100,14 +109,6 @@ export const ImageUpload = ({navigation}) => {
         setPhoto(null);
       } else {
         setPhoto(response);
-        // const source = {uri: response.uri};
-
-        // // You can also display the image using data:
-        // // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        // this.setState({
-        //   avatarSource: source,
-        // });
       }
     });
   };
@@ -176,6 +177,49 @@ export const ImageUpload = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
               }}>
+              <Modal
+                visible={varietyVisible}
+                backdropStyle={styles.backdrop}
+                onBackdropPress={() => setVisible(false)}>
+                <Card disabled={true}>
+                  <Text>Pflanzensorte</Text>
+                  <Select
+                    selectedIndex={variety}
+                    onSelect={index => setVariety(index)}>
+                    <SelectItem title="Option 1" />
+                    <SelectItem title="Option 2" />
+                    <SelectItem title="Option 3" />
+                  </Select>
+                  <Button
+                    onPress={() => {
+                      setVarietyVisible(false);
+                      setGrowthVisible(true);
+                    }}>
+                    Weiter
+                  </Button>
+                </Card>
+              </Modal>
+              <Modal
+                visible={growthVisible}
+                backdropStyle={styles.backdrop}
+                onBackdropPress={() => setVisible(false)}>
+                <Card disabled={true}>
+                  <Text>Wachstumsstadium</Text>
+                  <Select
+                    selectedIndex={growth}
+                    onSelect={index => setGrowth(index)}>
+                    <SelectItem title="Option 1" />
+                    <SelectItem title="Option 2" />
+                    <SelectItem title="Option 3" />
+                  </Select>
+                  <Button
+                    onPress={() => {
+                      setGrowthVisible(false);
+                    }}>
+                    Weiter
+                  </Button>
+                </Card>
+              </Modal>
               {photo ? (
                 <>
                   <Button
@@ -244,5 +288,8 @@ const styles = StyleSheet.create({
   spinnertext: {
     color: 'white',
     margin: 20,
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
