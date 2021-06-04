@@ -1,5 +1,5 @@
 from flask import jsonify, request, flash, redirect, url_for, send_from_directory, current_app, Response
-from app import db, avatars
+from app import db
 from app.models import Result
 from app.views import bp
 import os
@@ -21,6 +21,38 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
+@bp.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(
+                current_app.config['UPLOAD_FOLDER'], filename))
+            newFile = Result(name=filename, img=file.read())
+            db.session.add(newFile)
+            db.session.commit()
+            return redirect(url_for('api.download_file', name=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
+
 @bp.route('/upload', methods=['POST'])
 def upload():
     # request uploaded file from request object
@@ -31,32 +63,24 @@ def upload():
         return "No selected file!", 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
+        file.save(os.path.join(
+            current_app.config['UPLOAD_FOLDER'], filename))
         mimetype = file.mimetype
-        image = Image.open(file)
-        MAX_SIZE = (200, 200)
-        image.thumbnail(MAX_SIZE)
-        image.save(os.path.join(
-            current_app.config['AVATARS_SAVE_PATH'], filename))
         # get color values from image data
         hm, hcm, hcs = read_image_data(filename)
         # send to db
         newFile = Result(name=filename, type=mimetype, img=file.read(),
                          hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
+        # newFile = Result(name=filename, type=mimetype, img=file.read())
         db.session.add(newFile)
         db.session.commit()
         return jsonify(newFile.id)
 
 
-@bp.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(current_app.config['AVATARS_SAVE_PATH'],
-                               filename)
-
-
-def read_image_data(avatar_filename):
+def read_image_data(filename):
     # Read image
     img, path, filename = pcv.readimage(os.path.join(
-        current_app.config['AVATARS_SAVE_PATH'], avatar_filename))
+        current_app.config["UPLOAD_FOLDER"], filename))
 
     mask, masked_img = pcv.threshold.custom_range(
         img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
@@ -115,13 +139,13 @@ def read_image_data(avatar_filename):
     return hm, hcm, hcs
 
 
-@bp.route('/avatars/<path:filename>')
-def get_avatar(filename):
-    return send_from_directory(current_app.config['AVATARS_SAVE_PATH'], filename)
+@bp.route('/images/<name>')
+def get_image_by_name(name):
+    return send_from_directory(current_app.config["UPLOAD_FOLDER"], name)
 
 
 @bp.route('/images/<int:id>')
-def get_image(id):
+def get_image_by_id(id):
     img = Result.query.filter_by(id=id).first()
     if not img:
         return 'No img found', 404
