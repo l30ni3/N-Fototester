@@ -1,12 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Image,
-  Platform,
-  Text,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Image, Platform} from 'react-native';
 import {
   Button,
   Card,
@@ -20,40 +13,28 @@ import {
   Select,
   SelectItem,
   Spinner,
+  Text,
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {RNCamera} from 'react-native-camera';
 import Permissions from 'react-native-permissions';
 
-const SERVER_URL = 'http://localhost:5000';
-
-const createFormData = photo => {
-  let localUri =
-    Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri;
-  let filename = localUri.split('/').pop();
-  // Infer the type of the image
-  let match = /\.(\w+)$/.exec(filename);
-  let type = match ? `image/${match[1]}` : `image`;
-
-  const data = new FormData();
-  data.append('photo', {
-    name: filename,
-    type: type,
-    uri: localUri,
-  });
-
-  return data;
-};
+const GLOBAL = require('./components/constants');
 
 export const ImageUpload = ({navigation}) => {
   const [photo, setPhoto] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [itemId, setItemId] = useState(null);
   const [permission, setPermission] = useState('undetermined');
-  const [varietyVisible, setVarietyVisible] = useState(true);
-  const [growthVisible, setGrowthVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [crop, setCrop] = useState(new IndexPath(0));
   const [variety, setVariety] = useState(new IndexPath(0));
   const [growth, setGrowth] = useState(new IndexPath(0));
+  const [sowing, setSowing] = useState(new IndexPath(0));
+  const displayCropValue = GLOBAL.CROP_DATA[crop.row];
+  const displayVarietyValue = GLOBAL.VARIETY_DATA[variety.row];
+  const displayGrowthValue = GLOBAL.GROWTH_DATA[growth.row];
+  const displaySowingValue = GLOBAL.SOWING_DATA[sowing.row];
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
   const CameraIcon = props => <Icon {...props} name="camera" />;
@@ -77,6 +58,7 @@ export const ImageUpload = ({navigation}) => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
       setPermission(response);
     });
+    setVisible(true);
   }, []);
 
   useEffect(() => {
@@ -130,7 +112,7 @@ export const ImageUpload = ({navigation}) => {
       name: filename,
       type: type,
     });
-    fetch(`${SERVER_URL}/api/upload`, {
+    fetch(`${GLOBAL.SERVER_URL}/api/upload`, {
       method: 'POST',
       body: formData,
       // headers: {
@@ -151,6 +133,14 @@ export const ImageUpload = ({navigation}) => {
       });
   };
 
+  const renderOption = title => <SelectItem title={title} />;
+  const Header = props => (
+    <View {...props}>
+      <Text category="h6">Neue Messung</Text>
+      <Text category="s1">Was möchten Sie analysieren?</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <TopNavigation
@@ -159,6 +149,68 @@ export const ImageUpload = ({navigation}) => {
         accessoryLeft={BackAction}
       />
       <Divider />
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}>
+        <Card disabled={true} header={Header} style={styles.modal}>
+          <Select
+            label={evaProps => (
+              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
+                Kultur
+              </Text>
+            )}
+            style={styles.select}
+            placeholder="Default"
+            value={displayCropValue}
+            selectedIndex={crop}
+            onSelect={index => setCrop(index)}>
+            {GLOBAL.CROP_DATA.map(renderOption)}
+          </Select>
+          <Select
+            label={evaProps => (
+              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
+                Sorte
+              </Text>
+            )}
+            style={styles.select}
+            placeholder="Default"
+            value={displayVarietyValue}
+            selectedIndex={variety}
+            onSelect={index => setVariety(index)}>
+            {GLOBAL.VARIETY_DATA.map(renderOption)}
+          </Select>
+          <Select
+            label={evaProps => (
+              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
+                Entwicklungsstadium
+              </Text>
+            )}
+            style={styles.select}
+            placeholder="Default"
+            value={displayGrowthValue}
+            selectedIndex={growth}
+            onSelect={index => setGrowth(index)}>
+            {GLOBAL.GROWTH_DATA.map(renderOption)}
+          </Select>
+          <Select
+            label={evaProps => (
+              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
+                Saattermin
+              </Text>
+            )}
+            style={styles.select}
+            placeholder="Default"
+            selectedIndex={sowing}
+            value={displaySowingValue}
+            onSelect={index => setSowing(index)}>
+            {GLOBAL.SOWING_DATA.map(renderOption)}
+          </Select>
+          <Button style={styles.modal_button} onPress={() => setVisible(false)}>
+            Weiter
+          </Button>
+        </Card>
+      </Modal>
       <Layout
         style={{
           flex: 1,
@@ -177,49 +229,6 @@ export const ImageUpload = ({navigation}) => {
                 flexDirection: 'row',
                 justifyContent: 'center',
               }}>
-              <Modal
-                visible={varietyVisible}
-                backdropStyle={styles.backdrop}
-                onBackdropPress={() => setVisible(false)}>
-                <Card disabled={true}>
-                  <Text>Pflanzensorte</Text>
-                  <Select
-                    selectedIndex={variety}
-                    onSelect={index => setVariety(index)}>
-                    <SelectItem title="Option 1" />
-                    <SelectItem title="Option 2" />
-                    <SelectItem title="Option 3" />
-                  </Select>
-                  <Button
-                    onPress={() => {
-                      setVarietyVisible(false);
-                      setGrowthVisible(true);
-                    }}>
-                    Weiter
-                  </Button>
-                </Card>
-              </Modal>
-              <Modal
-                visible={growthVisible}
-                backdropStyle={styles.backdrop}
-                onBackdropPress={() => setVisible(false)}>
-                <Card disabled={true}>
-                  <Text>Wachstumsstadium</Text>
-                  <Select
-                    selectedIndex={growth}
-                    onSelect={index => setGrowth(index)}>
-                    <SelectItem title="Option 1" />
-                    <SelectItem title="Option 2" />
-                    <SelectItem title="Option 3" />
-                  </Select>
-                  <Button
-                    onPress={() => {
-                      setGrowthVisible(false);
-                    }}>
-                    Weiter
-                  </Button>
-                </Card>
-              </Modal>
               {photo ? (
                 <>
                   <Button
@@ -291,5 +300,28 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modal: {
+    minWidth: 300,
+    marginRight: 0,
+    marginLeft: 0,
+  },
+  modal_label: {
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  modal_item: {
+    color: 'white',
+    fontSize: 24,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  modal_button: {
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  select: {
+    flex: 1,
+    margin: 2,
   },
 });
