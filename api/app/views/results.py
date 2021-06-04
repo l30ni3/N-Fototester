@@ -1,56 +1,16 @@
-from flask import jsonify, request, flash, redirect, url_for, send_from_directory, current_app, Response
+from flask import jsonify, request, send_from_directory, current_app
 from app import db
 from app.models import Result
 from app.views import bp
 import os
 from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
-from io import BytesIO
 from flask import send_file
-import base64
-import numpy as np
 from plantcv import plantcv as pcv
-import json
-from PIL import Image
-from io import BytesIO
-
-# TODO add allowed extensions
 
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
-
-
-@bp.route('/', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(
-                current_app.config['UPLOAD_FOLDER'], filename))
-            newFile = Result(name=filename, img=file.read())
-            db.session.add(newFile)
-            db.session.commit()
-            return redirect(url_for('api.download_file', name=filename))
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
 
 
 @bp.route('/upload', methods=['POST'])
@@ -140,17 +100,16 @@ def read_image_data(filename):
 
 
 @bp.route('/images/<name>')
-def get_image_by_name(name):
+def get_image(name):
     return send_from_directory(current_app.config["UPLOAD_FOLDER"], name)
 
 
-@bp.route('/images/<int:id>')
-def get_image_by_id(id):
-    img = Result.query.filter_by(id=id).first()
-    if not img:
-        return 'No img found', 404
-
-    return Response(img.img, mimetype=img.type)
+@bp.route('/images/delete/<name>/')
+def delete_image(name):
+    if name == '':
+        return "Name empty", 400
+    os.remove(os.path.join(current_app.config["UPLOAD_FOLDER"], name))
+    return "Successfully deleted image from file system", 200
 
 
 @bp.route('/results', methods=['GET'])
@@ -182,4 +141,5 @@ def delete(id):
 
     for res in results_list:
         results.append(res.to_dict())
+    delete_image(item.name)
     return jsonify(results)
