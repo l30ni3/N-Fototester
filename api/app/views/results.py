@@ -1,4 +1,4 @@
-from flask import jsonify, request, flash, redirect, send_from_directory, current_app
+from flask import jsonify, request, flash, redirect, url_for, send_from_directory, current_app, Response
 from app import db, avatars
 from app.models import Result
 from app.views import bp
@@ -12,32 +12,45 @@ import numpy as np
 from plantcv import plantcv as pcv
 import json
 from PIL import Image
+from io import BytesIO
 
 # TODO add allowed extensions
 
 
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
 @bp.route('/upload', methods=['POST'])
 def upload():
     # request uploaded file from request object
+    if 'photo' not in request.files:
+        return "No file part!", 400
     file = request.files['photo']
-    filename = file.filename
-    image = Image.open(file)
-    MAX_SIZE = (200, 200)
-    image.thumbnail(MAX_SIZE)
-    image.save(os.path.join(
-        current_app.config['AVATARS_SAVE_PATH'], filename))
-    # get color values from image data
-    hm, hcm, hcs = read_image_data(filename)
-    # send to db
-    newFile = Result(name=filename,
-                     hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
-    db.session.add(newFile)
-    db.session.commit()
-    return jsonify(newFile.id)
+    if file.filename == '':
+        return "No selected file!", 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        mimetype = file.mimetype
+        image = Image.open(file)
+        MAX_SIZE = (200, 200)
+        image.thumbnail(MAX_SIZE)
+        image.save(os.path.join(
+            current_app.config['AVATARS_SAVE_PATH'], filename))
+        # get color values from image data
+        hm, hcm, hcs = read_image_data(filename)
+        # send to db
+        newFile = Result(name=filename, type=mimetype, img=file.read(),
+                         hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
+        db.session.add(newFile)
+        db.session.commit()
+        return jsonify(newFile.id)
+
+
+@bp.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(current_app.config['AVATARS_SAVE_PATH'],
+                               filename)
 
 
 def read_image_data(avatar_filename):
@@ -102,12 +115,21 @@ def read_image_data(avatar_filename):
     return hm, hcm, hcs
 
 
-@ bp.route('/avatars/<path:filename>')
+@bp.route('/avatars/<path:filename>')
 def get_avatar(filename):
     return send_from_directory(current_app.config['AVATARS_SAVE_PATH'], filename)
 
 
-@ bp.route('/results', methods=['GET'])
+@bp.route('/images/<int:id>')
+def get_image(id):
+    img = Result.query.filter_by(id=id).first()
+    if not img:
+        return 'No img found', 404
+
+    return Response(img.img, mimetype=img.type)
+
+
+@bp.route('/results', methods=['GET'])
 def get_results():
     results_list = Result.query.all()
     results = []
@@ -117,14 +139,14 @@ def get_results():
     return jsonify(results)
 
 
-@ bp.route('/results/<int:id>')
+@bp.route('/results/<int:id>')
 def get_result(id):
     image = jsonify(Result.query.get_or_404(id).to_dict())
     return image
 
 
 # Delete
-@ bp.route('/results/<int:id>/delete', methods=['GET', 'POST'])
+@bp.route('/results/<int:id>/delete', methods=['GET', 'POST'])
 def delete(id):
 
     item = Result.query.get(id)

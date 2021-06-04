@@ -146,6 +146,7 @@ export const ImageUpload = ({navigation}) => {
       })
       .catch(error => {
         console.log('upload error', error);
+        setIsLoading(false);
       });
   };
 

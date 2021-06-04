@@ -7,7 +7,7 @@ class Result(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     name = db.Column(db.String(128))
     type = db.Column(db.String(128))
-    avatar = db.Column(db.String(128))
+    img = db.Column(db.Text)
     hue_circular_mean = db.Column(db.Integer)
     hue_circular_std = db.Column(db.Integer)
     hue_median = db.Column(db.Integer)
@@ -18,7 +18,6 @@ class Result(db.Model):
             'date': self.date,
             'name': self.name,
             'type': self.type,
-            'avatar': self.avatar,
             'hue_circular_mean': self.hue_circular_mean,
             'hue_circular_std': self.hue_circular_std,
             'hue_median': self.hue_median

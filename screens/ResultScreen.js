@@ -26,7 +26,6 @@ export const ResultScreen = ({route, navigation}) => {
   const {itemId} = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [avatar, setAvatar] = useState('');
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
 
@@ -38,7 +37,6 @@ export const ResultScreen = ({route, navigation}) => {
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
-  // const renderAvatar = props => require(`../api/avatars/${props.name}`);
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/results/${itemId}`)
@@ -46,13 +44,6 @@ export const ResultScreen = ({route, navigation}) => {
       .then(json => setData(json))
       .catch(error => console.error(error));
   }, []);
-
-  useEffect(() => {
-    setAvatar(`../api/avatars/${data.name}`);
-    if (data) {
-      console.log(avatar);
-    }
-  }, [data]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -67,18 +58,7 @@ export const ResultScreen = ({route, navigation}) => {
           flex: 1,
         }}>
         <View style={styles.image_container}>
-          {data && (
-            // <Avatar
-            //   style={styles.avatar}
-            //   size="giant"
-            //   source={require('../api/avatars/728EE956-850C-43D7-8551-0421D7063611.jpg')}
-            // />
-            <Image
-              style={styles.avatar}
-              source={require('../api/avatars/728EE956-850C-43D7-8551-0421D7063611.jpg')}
-            />
-            // <Image style={styles.avatar} source={require(`${avatar}`)} />
-          )}
+          <Text>Insert image here</Text>
         </View>
         {!isLoading ? (
           <View style={styles.container}>

@@ -30,12 +30,6 @@ export const HomeScreen = ({navigation}) => {
     />
   );
 
-  const renderAvatar = props => (
-    <Avatar
-      size="tiny"
-      source={require('../api/avatars/728EE956-850C-43D7-8551-0421D7063611.jpg')}
-    />
-  );
 
   const renderItemAccessory = props => (
     <>
@@ -63,7 +57,7 @@ export const HomeScreen = ({navigation}) => {
 
   const renderItem = ({item, index}) => (
     <ListItem
-      accessoryLeft={props => renderAvatar({...{itemId: item.id}, ...props})}
+      // accessoryLeft={props => renderAvatar({...{itemId: item.id}, ...props})}
       title={
         <Moment element={Text} fromNow>
           {item.date}
