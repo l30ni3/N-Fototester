@@ -69,6 +69,10 @@ export const ImageUpload = ({navigation}) => {
       : null;
   }, [itemId]);
 
+  useEffect(() => {
+    console.log(visible);
+  }, [visible]);
+
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
       if (response) {
@@ -152,7 +156,8 @@ export const ImageUpload = ({navigation}) => {
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setVisible(false)}>
+        // onBackdropPress={() => setVisible(false)}
+      >
         <Card disabled={true} header={Header} style={styles.modal}>
           <Select
             label={evaProps => (
@@ -164,7 +169,8 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayCropValue}
             selectedIndex={crop}
-            onSelect={index => setCrop(index)}>
+            // onSelect={index => setCrop(index)}
+          >
             {GLOBAL.CROP_DATA.map(renderOption)}
           </Select>
           <Select
@@ -177,7 +183,8 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayVarietyValue}
             selectedIndex={variety}
-            onSelect={index => setVariety(index)}>
+            // onSelect={index => setVariety(index)}
+          >
             {GLOBAL.VARIETY_DATA.map(renderOption)}
           </Select>
           <Select
@@ -190,7 +197,8 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayGrowthValue}
             selectedIndex={growth}
-            onSelect={index => setGrowth(index)}>
+            // onSelect={index => setGrowth(index)}
+          >
             {GLOBAL.GROWTH_DATA.map(renderOption)}
           </Select>
           <Select
@@ -203,12 +211,12 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             selectedIndex={sowing}
             value={displaySowingValue}
-            onSelect={index => setSowing(index)}>
+            // onSelect={index => setSowing(index)}
+          >
             {GLOBAL.SOWING_DATA.map(renderOption)}
           </Select>
-          <Button style={styles.modal_button} onPress={() => setVisible(false)}>
-            Weiter
-          </Button>
+          {/* <Button style={styles.modal_button} onPress={() => setVisible(false)}> */}
+          <Button style={styles.modal_button}>Weiter</Button>
         </Card>
       </Modal>
       <Layout

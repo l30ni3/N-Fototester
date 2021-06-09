@@ -60,3 +60,6 @@ buck-out/
 
 venv
 __pycache__
+
+# Uploaded files
+/api/uploads/
