@@ -137,13 +137,24 @@ export const ImageUpload = ({navigation}) => {
       });
   };
 
-  const renderOption = title => <SelectItem title={title} />;
+  const renderOption = title => <SelectItem title={title} key={title} />;
   const Header = props => (
     <View {...props}>
       <Text category="h6">Neue Messung</Text>
       <Text category="s1">Was möchten Sie analysieren?</Text>
     </View>
   );
+
+  const toggleModal = () => {
+    setVisible(!visible);
+    // TODO: send these values to db
+    console.log(
+      displayCropValue,
+      displayVarietyValue,
+      displayGrowthValue,
+      displaySowingValue,
+    );
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -156,8 +167,7 @@ export const ImageUpload = ({navigation}) => {
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
-        // onBackdropPress={() => setVisible(false)}
-      >
+        onBackdropPress={toggleModal}>
         <Card disabled={true} header={Header} style={styles.modal}>
           <Select
             label={evaProps => (
@@ -169,8 +179,7 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayCropValue}
             selectedIndex={crop}
-            // onSelect={index => setCrop(index)}
-          >
+            onSelect={index => setCrop(index)}>
             {GLOBAL.CROP_DATA.map(renderOption)}
           </Select>
           <Select
@@ -183,8 +192,7 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayVarietyValue}
             selectedIndex={variety}
-            // onSelect={index => setVariety(index)}
-          >
+            onSelect={index => setVariety(index)}>
             {GLOBAL.VARIETY_DATA.map(renderOption)}
           </Select>
           <Select
@@ -197,8 +205,7 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             value={displayGrowthValue}
             selectedIndex={growth}
-            // onSelect={index => setGrowth(index)}
-          >
+            onSelect={index => setGrowth(index)}>
             {GLOBAL.GROWTH_DATA.map(renderOption)}
           </Select>
           <Select
@@ -211,12 +218,12 @@ export const ImageUpload = ({navigation}) => {
             placeholder="Default"
             selectedIndex={sowing}
             value={displaySowingValue}
-            // onSelect={index => setSowing(index)}
-          >
+            onSelect={index => setSowing(index)}>
             {GLOBAL.SOWING_DATA.map(renderOption)}
           </Select>
-          {/* <Button style={styles.modal_button} onPress={() => setVisible(false)}> */}
-          <Button style={styles.modal_button}>Weiter</Button>
+          <Button style={styles.modal_button} onPress={toggleModal}>
+            Weiter
+          </Button>
         </Card>
       </Modal>
       <Layout
