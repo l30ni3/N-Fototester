@@ -11,6 +11,7 @@ import {
 } from '@ui-kitten/components';
 import {HomeScreen} from '../HomeScreen';
 import {SelectParams} from '../SelectParams';
+import {Tutorial1} from '../Tutorial1';
 import {ImageUpload} from '../ImageUpload';
 import {ResultScreen} from '../ResultScreen';
 
@@ -62,6 +63,7 @@ export const DrawerNavigator = () => (
   <Navigator drawerContent={props => <DrawerContent {...props} />}>
     <Screen name="Meine Messungen" component={HomeScreen} />
     <Screen name="Optionen wählen" component={SelectParams} />
+    <Screen name="Tutorial 1" component={Tutorial1} />
     <Screen name="Neue Messung" component={ImageUpload} />
     <Screen name="Ergebnis" component={ResultScreen} />
   </Navigator>

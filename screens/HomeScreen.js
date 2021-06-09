@@ -106,8 +106,8 @@ export const HomeScreen = ({navigation}) => {
           style={{
             margin: 30,
           }}
-          onPress={() => navigation.navigate('Optionen wählen')}>
-          Neue Messung
+          onPress={() => navigation.navigate('Tutorial 1')}>
+          Neue Messung starten
         </Button>
       </Layout>
     </SafeAreaView>
