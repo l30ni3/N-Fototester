@@ -106,8 +106,7 @@ export const HomeScreen = ({navigation}) => {
           style={{
             margin: 30,
           }}
-          onPress={() => navigation.navigate('Neue Messung')}>
-          {' '}
+          onPress={() => navigation.navigate('Optionen wählen')}>
           Neue Messung
         </Button>
       </Layout>

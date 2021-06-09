@@ -2,16 +2,11 @@ import React, {useState, useRef, useEffect} from 'react';
 import {SafeAreaView, StyleSheet, View, Image, Platform} from 'react-native';
 import {
   Button,
-  Card,
   Divider,
   Icon,
-  IndexPath,
   Layout,
-  Modal,
   TopNavigation,
   TopNavigationAction,
-  Select,
-  SelectItem,
   Spinner,
   Text,
 } from '@ui-kitten/components';
@@ -26,15 +21,6 @@ export const ImageUpload = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [itemId, setItemId] = useState(null);
   const [permission, setPermission] = useState('undetermined');
-  const [visible, setVisible] = useState(true);
-  const [crop, setCrop] = useState(new IndexPath(0));
-  const [variety, setVariety] = useState(new IndexPath(0));
-  const [growth, setGrowth] = useState(new IndexPath(0));
-  const [sowing, setSowing] = useState(new IndexPath(0));
-  const displayCropValue = GLOBAL.CROP_DATA[crop.row];
-  const displayVarietyValue = GLOBAL.VARIETY_DATA[variety.row];
-  const displayGrowthValue = GLOBAL.GROWTH_DATA[growth.row];
-  const displaySowingValue = GLOBAL.SOWING_DATA[sowing.row];
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
   const CameraIcon = props => <Icon {...props} name="camera" />;
@@ -58,7 +44,6 @@ export const ImageUpload = ({navigation}) => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
       setPermission(response);
     });
-    setVisible(true);
   }, []);
 
   useEffect(() => {
@@ -68,10 +53,6 @@ export const ImageUpload = ({navigation}) => {
         })
       : null;
   }, [itemId]);
-
-  useEffect(() => {
-    console.log(visible);
-  }, [visible]);
 
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
@@ -137,25 +118,6 @@ export const ImageUpload = ({navigation}) => {
       });
   };
 
-  const renderOption = title => <SelectItem title={title} key={title} />;
-  const Header = props => (
-    <View {...props}>
-      <Text category="h6">Neue Messung</Text>
-      <Text category="s1">Was möchten Sie analysieren?</Text>
-    </View>
-  );
-
-  const toggleModal = () => {
-    setVisible(!visible);
-    // TODO: send these values to db
-    console.log(
-      displayCropValue,
-      displayVarietyValue,
-      displayGrowthValue,
-      displaySowingValue,
-    );
-  };
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <TopNavigation
@@ -164,68 +126,6 @@ export const ImageUpload = ({navigation}) => {
         accessoryLeft={BackAction}
       />
       <Divider />
-      <Modal
-        visible={visible}
-        backdropStyle={styles.backdrop}
-        onBackdropPress={toggleModal}>
-        <Card disabled={true} header={Header} style={styles.modal}>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
-                Kultur
-              </Text>
-            )}
-            style={styles.select}
-            placeholder="Default"
-            value={displayCropValue}
-            selectedIndex={crop}
-            onSelect={index => setCrop(index)}>
-            {GLOBAL.CROP_DATA.map(renderOption)}
-          </Select>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
-                Sorte
-              </Text>
-            )}
-            style={styles.select}
-            placeholder="Default"
-            value={displayVarietyValue}
-            selectedIndex={variety}
-            onSelect={index => setVariety(index)}>
-            {GLOBAL.VARIETY_DATA.map(renderOption)}
-          </Select>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
-                Entwicklungsstadium
-              </Text>
-            )}
-            style={styles.select}
-            placeholder="Default"
-            value={displayGrowthValue}
-            selectedIndex={growth}
-            onSelect={index => setGrowth(index)}>
-            {GLOBAL.GROWTH_DATA.map(renderOption)}
-          </Select>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.modal_label]}>
-                Saattermin
-              </Text>
-            )}
-            style={styles.select}
-            placeholder="Default"
-            selectedIndex={sowing}
-            value={displaySowingValue}
-            onSelect={index => setSowing(index)}>
-            {GLOBAL.SOWING_DATA.map(renderOption)}
-          </Select>
-          <Button style={styles.modal_button} onPress={toggleModal}>
-            Weiter
-          </Button>
-        </Card>
-      </Modal>
       <Layout
         style={{
           flex: 1,
@@ -312,31 +212,5 @@ const styles = StyleSheet.create({
   spinnertext: {
     color: 'white',
     margin: 20,
-  },
-  backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modal: {
-    minWidth: 300,
-    marginRight: 0,
-    marginLeft: 0,
-  },
-  modal_label: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  modal_item: {
-    color: 'white',
-    fontSize: 24,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  modal_button: {
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  select: {
-    flex: 1,
-    margin: 2,
   },
 });
