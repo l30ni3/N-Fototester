@@ -7,6 +7,7 @@ from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
 from flask import send_file
 from plantcv import plantcv as pcv
+from PIL import Image
 
 
 def allowed_file(filename):
@@ -23,8 +24,15 @@ def upload():
         return "No selected file!", 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(
+        # creating a object
+        image = Image.open(file)
+        MAX_SIZE = (500, 500)
+        image.thumbnail(MAX_SIZE)
+        # creating thumbnail
+        image.save(os.path.join(
             current_app.config['UPLOAD_FOLDER'], filename))
+        # file.save(os.path.join(
+        #     current_app.config['UPLOAD_FOLDER'], filename))
         mimetype = file.mimetype
         # get color values from image data
         hm, hcm, hcs = read_image_data(filename)
