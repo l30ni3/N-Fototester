@@ -38,7 +38,6 @@ export const ImageUpload = ({navigation}) => {
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
-  // todo properly ask for permissions
   useEffect(() => {
     Permissions.check('photo').then(response => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'

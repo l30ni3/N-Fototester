@@ -1,5 +1,5 @@
-import React, {useState, useRef, useCallback} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
+import {SafeAreaView, StyleSheet, View, Dimensions} from 'react-native';
 import {
   Button,
   Divider,
@@ -9,7 +9,7 @@ import {
   TopNavigationAction,
   Text,
 } from '@ui-kitten/components';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
 
 const GLOBAL = require('./components/constants');
 
@@ -18,23 +18,57 @@ export const Tutorial1 = ({navigation}) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [carouselItems, setCarouselItems] = useState(GLOBAL.CAROUSEL_ITEMS);
   const ref = useRef(null);
+  const window = Dimensions.get('window');
+  const CARD_WIDTH = window.width * 0.8;
+  const CAROUSEL_WIDTH = window.width;
+  const [isFirst, setIsFirst] = useState(false);
+  const [isLast, setIsLast] = useState(false);
 
   const navigateBack = () => {
     navigation.goBack();
+  };
+
+  const goForward = () => {
+    ref.current.snapToNext();
+  };
+
+  const goBack = () => {
+    ref.current.snapToPrev();
   };
 
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
-  const renderItem = useCallback(({item, index}) => {
+  const renderItem = useCallback(({item, index}, parallaxProps) => {
     return (
       <View style={styles.intro_item}>
-        <Text>{item.title}</Text>
-        <Text>{item.text}</Text>
+        <ParallaxImage
+          source={item.thumbnail}
+          containerStyle={styles.item_image_container}
+          style={styles.item_image}
+          parallaxFactor={0.4}
+          {...parallaxProps}
+        />
+        <Text style={styles.item_text} category="h6">
+          {item.title}
+        </Text>
+        <Text style={styles.item_text}>{item.text}</Text>
       </View>
     );
   }, []);
+
+  useEffect(() => {
+    console.log(activeIndex);
+    if (activeIndex == 0) {
+      setIsFirst(true);
+    } else if (activeIndex == 2) {
+      setIsLast(true);
+    } else {
+      setIsFirst(false);
+      setIsLast(false);
+    }
+  }, [activeIndex]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -50,30 +84,47 @@ export const Tutorial1 = ({navigation}) => {
             layout={'default'}
             ref={ref}
             data={carouselItems}
-            sliderWidth={300}
-            itemWidth={300}
             renderItem={renderItem}
             onSnapToItem={index => setActiveIndex(index)}
+            sliderWidth={CAROUSEL_WIDTH}
+            itemWidth={CARD_WIDTH}
+            windowSize={1}
+            hasParallaxImages={true}
           />
         </Layout>
-        {/* <Layout style={styles.intro_bottom} level="4">
-          <Button
-            style={styles.intro_button}
-            onPress={() => setActiveIndex(activeIndex - 1)}>
-            Zurück
-          </Button>
-          <Button
-            style={styles.intro_button}
-            onPress={() => setActiveIndex(activeIndex + 1)}>
-            Weiter
-          </Button>
-        </Layout> */}
+
         <Layout style={styles.intro_bottom} level="4">
-          <Button
-            style={styles.intro_button}
+          {isFirst ? (
+            <Button
+              style={styles.intro_button}
+              onPress={goBack}
+              disabled={true}>
+              Zurück
+            </Button>
+          ) : (
+            <Button style={styles.intro_button} onPress={goBack}>
+              Zurück
+            </Button>
+          )}
+
+          {isLast ? (
+            <Button
+              style={styles.intro_button}
+              onPress={() => navigation.navigate('Optionen wählen')}>
+              Starten
+            </Button>
+          ) : (
+            <Button style={styles.intro_button} onPress={goForward}>
+              Weiter
+            </Button>
+          )}
+        </Layout>
+        <Layout style={styles.skip} level="4">
+          <Text
+            style={styles.skip_text}
             onPress={() => navigation.navigate('Optionen wählen')}>
             Überspringen
-          </Button>
+          </Text>
         </Layout>
       </Layout>
     </SafeAreaView>
@@ -84,7 +135,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingTop: 20,
   },
   intro: {
     flex: 1,
@@ -92,11 +143,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   intro_item: {
-    backgroundColor: 'red',
     borderRadius: 5,
     flex: 1,
-    padding: 50,
-    margin: 15,
+    marginTop: 15,
   },
   intro_titel: {
     paddingTop: 15,
@@ -104,9 +153,32 @@ const styles = StyleSheet.create({
   },
   intro_bottom: {
     flexDirection: 'row',
+    padding: 25,
   },
   intro_button: {
     flex: 1,
-    margin: 5,
+    margin: 15,
+  },
+  skip: {
+    alignItems: 'center',
+    paddingBottom: 25,
+  },
+  skip_text: {
+    color: '#3366FF',
+    fontWeight: '600',
+  },
+  item_image_container: {
+    flex: 1,
+    marginBottom: Platform.select({ios: 0, android: 1}), // Prevent a random Android rendering issue
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  item_image: {
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: 'cover',
+  },
+  item_text: {
+    marginTop: 5,
   },
 });
