@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Keyboard} from 'react-native';
 import {
   Button,
   Divider,
@@ -20,7 +20,7 @@ export const SelectParams = ({navigation}) => {
   const [crop, setCrop] = useState(new IndexPath(0));
   const [growth, setGrowth] = useState(new IndexPath(0));
   const [variant, setVariant] = React.useState('');
-  const [replicate, setVReplicate] = React.useState('');
+  const [replicate, setReplicate] = React.useState('');
 
   const displayCropValue = GLOBAL.CROP_DATA[crop.row];
   const displayGrowthValue = GLOBAL.GROWTH_DATA[growth.row];
@@ -36,6 +36,10 @@ export const SelectParams = ({navigation}) => {
   );
 
   const renderOption = title => <SelectItem title={title} key={title} />;
+
+  // useEffect(() => {
+  //   console.log(variant, replicate, displayGrowthValue, displayCropValue);
+  // }, [displayCropValue, displayCropValue, replicate, variant]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -103,7 +107,15 @@ export const SelectParams = ({navigation}) => {
 
           <Button
             style={styles.form_submit}
-            onPress={() => navigation.navigate('Neue Messung')}>
+            onPress={() => {
+              Keyboard.dismiss(),
+                navigation.navigate('Neue Messung', {
+                  crop: displayCropValue,
+                  growth: displayGrowthValue,
+                  variant: variant,
+                  replicate: replicate,
+                });
+            }}>
             Weiter
           </Button>
         </Layout>

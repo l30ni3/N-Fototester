@@ -16,7 +16,8 @@ import Permissions from 'react-native-permissions';
 
 const GLOBAL = require('./components/constants');
 
-export const ImageUpload = ({navigation}) => {
+export const ImageUpload = ({route, navigation}) => {
+  const {crop, growth, variant, replicate} = route.params;
   const [photo, setPhoto] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [itemId, setItemId] = useState(null);
@@ -43,6 +44,7 @@ export const ImageUpload = ({navigation}) => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
       setPermission(response);
     });
+    console.log(crop, growth, variant, replicate);
   }, []);
 
   useEffect(() => {
@@ -96,6 +98,10 @@ export const ImageUpload = ({navigation}) => {
       name: filename,
       type: type,
     });
+    formData.append('crop', crop);
+    formData.append('growth', growth);
+    formData.append('variant', variant);
+    formData.append('replicate', replicate);
     fetch(`${GLOBAL.SERVER_URL}/api/upload`, {
       method: 'POST',
       body: formData,

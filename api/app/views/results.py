@@ -16,6 +16,11 @@ def allowed_file(filename):
 
 @bp.route('/upload', methods=['POST'])
 def upload():
+    print(request.form)
+    crop = request.form['crop']
+    growth = request.form['growth']
+    variant = request.form['variant']
+    replicate = request.form['replicate']
     # request uploaded file from request object
     if 'photo' not in request.files:
         return "No file part!", 400
@@ -35,10 +40,10 @@ def upload():
         #     current_app.config['UPLOAD_FOLDER'], filename))
         mimetype = file.mimetype
         # get color values from image data
-        hm, hcm, hcs = read_image_data(filename)
+        hm = read_image_data(filename)
         # send to db
         newFile = Result(name=filename, type=mimetype, img=file.read(),
-                         hue_circular_mean=hcm, hue_circular_std=hcs, hue_median=hm)
+                         hue_median=hm, crop=crop, growth=growth, variant=variant, replicate=replicate)
         # newFile = Result(name=filename, type=mimetype, img=file.read())
         db.session.add(newFile)
         db.session.commit()
@@ -85,17 +90,6 @@ def read_image_data(filename):
     # color_histogram.save(os.path.join(UPLOAD_FOLDER, 'histogram'))
 
     # Access data stored out from analyze_color
-    print(pcv.outputs.observations['default']
-          ['hue_circular_mean']['value'])
-
-    hcm = pcv.outputs.observations['default']['hue_circular_mean']['value']
-
-    # Access data stored out from analyze_color
-    print(pcv.outputs.observations['default']['hue_circular_std']['value'])
-
-    hcs = pcv.outputs.observations['default']['hue_circular_std']['value']
-
-    # Access data stored out from analyze_color
     print(pcv.outputs.observations['default']['hue_median']['value'])
 
     hm = pcv.outputs.observations['default']['hue_median']['value']
@@ -104,7 +98,7 @@ def read_image_data(filename):
     # pcv.outputs.save_results(
     #     filename=os.path.join(TMP_FOLDER, 'results.json'))
 
-    return hm, hcm, hcs
+    return hm
 
 
 @bp.route('/images/<name>')
