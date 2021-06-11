@@ -50,7 +50,7 @@ export const HomeScreen = ({navigation}) => {
       <Icon
         {...props}
         onPress={() => {
-          fetch(`http://localhost:5000/api/results/${props.itemId}/delete`)
+          fetch(`${GLOBAL.SERVER_URL}/api/results/${props.itemId}/delete`)
             .then(res => res.json())
             .then(json => setData(json))
             .catch(error => console.error(error));
@@ -75,7 +75,7 @@ export const HomeScreen = ({navigation}) => {
   );
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/results')
+    fetch(`${GLOBAL.SERVER_URL}/api/results`)
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
@@ -83,7 +83,7 @@ export const HomeScreen = ({navigation}) => {
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetch('http://localhost:5000/api/results')
+    fetch(`${GLOBAL.SERVER_URL}/api/results`)
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));

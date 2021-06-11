@@ -1,10 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   View,
   Image,
-  Platform,
+  Dimensions,
   Text,
 } from 'react-native';
 import {
@@ -27,6 +27,7 @@ export const ResultScreen = ({route, navigation}) => {
   const [data, setData] = useState([]);
   const [avatar, setAvatar] = useState('');
   const isFocused = useIsFocused();
+  const window = Dimensions.get('window');
 
   const BackIcon = props => <Icon {...props} name="chevron-left-outline" />;
 
@@ -39,7 +40,7 @@ export const ResultScreen = ({route, navigation}) => {
   );
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/results/${itemId}`)
+    fetch(`${GLOBAL.SERVER_URL}/api/results/${itemId}`)
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
@@ -47,7 +48,7 @@ export const ResultScreen = ({route, navigation}) => {
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetch(`http://localhost:5000/api/results/${itemId}`)
+    fetch(`${GLOBAL.SERVER_URL}/api/results/${itemId}`)
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
@@ -67,22 +68,36 @@ export const ResultScreen = ({route, navigation}) => {
         accessoryLeft={BackAction}
       />
       <Divider />
-      <Layout
-        style={{
-          flex: 1,
-        }}>
-        <View style={styles.image_container}>
-          <Avatar style={styles.avatar} source={{uri: avatar}} />
-        </View>
+      <Layout style={styles.container} level="4">
         {!isLoading ? (
-          <View style={styles.container}>
-            <Text style={styles.text_bold}>Hue Circular Mean</Text>
-            <Text style={styles.text}>{data.hue_circular_mean}</Text>
-            <Text style={styles.text_bold}>Hue Circular Std</Text>
-            <Text style={styles.text}>{data.hue_circular_std}</Text>
-            <Text style={styles.text_bold}>Hue Median</Text>
-            <Text style={styles.text}>{data.hue_median}</Text>
-          </View>
+          <>
+            <View style={styles.image_container}>
+              {/* <Avatar style={styles.avatar} source={{uri: avatar}} /> */}
+              <Image
+                style={{width: window.width, height: window.height / 4}}
+                source={{uri: avatar}}></Image>
+            </View>
+            <View
+              style={[
+                styles.text_container,
+                {
+                  width: window.width,
+                  height: (window.height / 4) * 3,
+                },
+              ]}>
+              <Text style={styles.text_result}>{data.hue_median}</Text>
+              <Text style={styles.text_bold}>Datum:</Text>
+              <Text style={styles.text}>{data.date}</Text>
+              <Text style={styles.text_bold}>Kultur:</Text>
+              <Text style={styles.text}>{data.crop}</Text>
+              <Text style={styles.text_bold}>Entwicklungsstadium:</Text>
+              <Text style={styles.text}>{data.growth}</Text>
+              <Text style={styles.text_bold}>Variantenbezeichnung:</Text>
+              <Text style={styles.text}>{data.variant}</Text>
+              <Text style={styles.text_bold}>Wiederholung:</Text>
+              <Text style={styles.text}>{data.replicate}</Text>
+            </View>
+          </>
         ) : (
           <View style={styles.spinner}>
             <Spinner size="large" />
@@ -99,16 +114,7 @@ export const ResultScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'column',
-    padding: 40,
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  button: {
-    margin: 20,
+    justifyContent: 'flex-start',
   },
   spinner: {
     flex: 1,
@@ -123,20 +129,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'white',
   },
+  text_result: {
+    fontSize: 120,
+    color: '#3366FF',
+    padding: 10,
+  },
   text_bold: {
     fontWeight: '700',
     color: 'white',
   },
   image_container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     flexDirection: 'column',
   },
-  avatar: {
-    height: 200,
-    width: 200,
-    borderRadius: 200,
-    margin: 8,
+  text_container: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 });

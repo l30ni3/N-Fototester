@@ -1,5 +1,10 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Keyboard} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {
   Button,
   Divider,
@@ -42,93 +47,103 @@ export const SelectParams = ({navigation}) => {
   // }, [displayCropValue, displayCropValue, replicate, variant]);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <TopNavigation
-        title="Neue Messung"
-        alignment="center"
-        accessoryLeft={BackAction}
-      />
-      <Divider />
-      <Layout style={styles.container} level="4">
-        <Layout style={styles.form}>
-          <Text style={styles.form_title} category="h6">
-            Was möchten Sie analysieren?
-          </Text>
-          <Text category="s1">
-            Geben Sie mehr Details zur Pflanze an, um später Ihre Ergebnisse
-            besser vergleichen zu können.
-          </Text>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
-                Kultur
-              </Text>
-            )}
-            style={styles.form_select}
-            placeholder="Default"
-            value={displayCropValue}
-            selectedIndex={crop}
-            onSelect={index => setCrop(index)}>
-            {GLOBAL.CROP_DATA.map(renderOption)}
-          </Select>
-          <Select
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
-                Entwicklungsstadium
-              </Text>
-            )}
-            style={styles.form_select}
-            placeholder="Default"
-            value={displayGrowthValue}
-            selectedIndex={growth}
-            onSelect={index => setGrowth(index)}>
-            {GLOBAL.GROWTH_DATA.map(renderOption)}
-          </Select>
-          <Input
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
-                Variante
-              </Text>
-            )}
-            placeholder="Bezeichnung eingeben"
-            value={variant}
-            onChangeText={nextValue => setVariant(nextValue)}
-          />
-          <Input
-            label={evaProps => (
-              <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
-                Wiederholung
-              </Text>
-            )}
-            placeholder="Bezeichnung eingeben"
-            value={replicate}
-            onChangeText={nextValue => setReplicate(nextValue)}
-          />
+    <SafeAreaView style={{flex: 1, backgroundColor: '#101426'}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboard_wrapper}
+        keyboardVerticalOffset={100}>
+        <TopNavigation
+          title="Neue Messung"
+          alignment="center"
+          accessoryLeft={BackAction}
+        />
+        <Divider />
 
-          <Button
-            style={styles.form_submit}
-            onPress={() => {
-              Keyboard.dismiss(),
-                navigation.navigate('Neue Messung', {
-                  crop: displayCropValue,
-                  growth: displayGrowthValue,
-                  variant: variant,
-                  replicate: replicate,
-                });
-            }}>
-            Weiter
-          </Button>
+        <Layout style={styles.container} level="4">
+          <Layout style={styles.form}>
+            <Text style={styles.form_title} category="h6">
+              Was möchten Sie analysieren?
+            </Text>
+            <Text category="s1">
+              Geben Sie mehr Details zur Pflanze an, um später Ihre Ergebnisse
+              besser vergleichen zu können.
+            </Text>
+            <Select
+              label={evaProps => (
+                <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
+                  Kultur
+                </Text>
+              )}
+              style={styles.form_select}
+              placeholder="Default"
+              value={displayCropValue}
+              selectedIndex={crop}
+              onSelect={index => setCrop(index)}>
+              {GLOBAL.CROP_DATA.map(renderOption)}
+            </Select>
+            <Select
+              label={evaProps => (
+                <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
+                  Entwicklungsstadium
+                </Text>
+              )}
+              style={styles.form_select}
+              placeholder="Default"
+              value={displayGrowthValue}
+              selectedIndex={growth}
+              onSelect={index => setGrowth(index)}>
+              {GLOBAL.GROWTH_DATA.map(renderOption)}
+            </Select>
+            <Input
+              label={evaProps => (
+                <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
+                  Variante
+                </Text>
+              )}
+              placeholder="Bezeichnung eingeben"
+              value={variant}
+              onChangeText={nextValue => setVariant(nextValue)}
+            />
+            <Input
+              label={evaProps => (
+                <Text {...evaProps} style={[evaProps.style, styles.form_label]}>
+                  Wiederholung
+                </Text>
+              )}
+              placeholder="Bezeichnung eingeben"
+              value={replicate}
+              onChangeText={nextValue => setReplicate(nextValue)}
+            />
+
+            <Button
+              style={styles.form_submit}
+              onPress={() => {
+                Keyboard.dismiss(),
+                  navigation.navigate('Neue Messung', {
+                    crop: displayCropValue,
+                    growth: displayGrowthValue,
+                    variant: variant,
+                    replicate: replicate,
+                  });
+              }}>
+              Weiter
+            </Button>
+          </Layout>
         </Layout>
-      </Layout>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  keyboard_wrapper: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 30,
+    backgroundColor: '#101426',
   },
   form: {
     padding: 20,

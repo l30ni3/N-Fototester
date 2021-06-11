@@ -1,5 +1,5 @@
 module.exports = {
-  SERVER_URL: 'http://localhost:5000',
+  SERVER_URL: 'http://192.168.178.20:5000',
   CROP_DATA: ['Winterweizen', 'Sommerweizen', 'Mais'],
   VARIETY_DATA: ['Akteur', 'Alexander', 'Alfons', 'Alpha'],
   GROWTH_DATA: [
