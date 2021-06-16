@@ -11,7 +11,6 @@ import {
   Text,
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {RNCamera} from 'react-native-camera';
 import Permissions from 'react-native-permissions';
 
 const GLOBAL = require('./components/constants');

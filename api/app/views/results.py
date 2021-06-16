@@ -31,6 +31,7 @@ def upload():
         filename = secure_filename(file.filename)
         # creating a object
         image = Image.open(file)
+        # check for image orientation and rotate image if needed
         for orientation in ExifTags.TAGS.keys():
             if ExifTags.TAGS[orientation] == 'Orientation':
                 break
@@ -43,13 +44,11 @@ def upload():
             image = image.rotate(270, expand=True)
         elif exif[orientation] == 8:
             image = image.rotate(90, expand=True)
+        # creating thumbnail
         MAX_SIZE = (500, 500)
         image.thumbnail(MAX_SIZE)
-        # creating thumbnail
         image.save(os.path.join(
             current_app.config['UPLOAD_FOLDER'], filename))
-        # file.save(os.path.join(
-        #     current_app.config['UPLOAD_FOLDER'], filename))
         mimetype = file.mimetype
         # get color values from image data
         hm = read_image_data(filename)

@@ -16,7 +16,8 @@ import {useIsFocused} from '@react-navigation/native';
 import Moment from 'react-moment';
 const GLOBAL = require('./components/constants');
 
-export const HomeScreen = ({navigation}) => {
+export const HomeScreen = props => {
+  const navigation = props.navigation;
   const [data, setData] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
 

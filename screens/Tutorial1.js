@@ -169,7 +169,6 @@ const styles = StyleSheet.create({
   },
   item_image_container: {
     flex: 1,
-    marginBottom: Platform.select({ios: 0, android: 1}), // Prevent a random Android rendering issue
     backgroundColor: 'white',
     borderRadius: 5,
     marginBottom: 5,
