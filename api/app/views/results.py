@@ -7,7 +7,7 @@ from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
 from flask import send_file
 from plantcv import plantcv as pcv
-from PIL import Image
+from PIL import Image, ExifTags
 
 
 def allowed_file(filename):
@@ -31,6 +31,18 @@ def upload():
         filename = secure_filename(file.filename)
         # creating a object
         image = Image.open(file)
+        for orientation in ExifTags.TAGS.keys():
+            if ExifTags.TAGS[orientation] == 'Orientation':
+                break
+
+        exif = image._getexif()
+
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
         MAX_SIZE = (500, 500)
         image.thumbnail(MAX_SIZE)
         # creating thumbnail

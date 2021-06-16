@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {
   Button,

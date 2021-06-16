@@ -28,16 +28,6 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
 			<key>192.168.178.20/</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

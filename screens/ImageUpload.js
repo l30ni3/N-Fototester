@@ -44,7 +44,6 @@ export const ImageUpload = ({route, navigation}) => {
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
       setPermission(response);
     });
-    console.log(crop, growth, variant, replicate);
   }, []);
 
   useEffect(() => {
@@ -53,7 +52,7 @@ export const ImageUpload = ({route, navigation}) => {
           itemId: itemId,
         })
       : null;
-  }, [itemId]);
+  }, [itemId, navigation]);
 
   const handleTakePhoto = () => {
     launchCamera({noData: true}, response => {
