@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>ntester</string>
+	<string>N Fototester</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -61,12 +61,12 @@
 	<false/>
 	<key>address</key>
 	<dict>
-  	<key>NSExceptionAllowsInsecuredHTTPLoads</key>
-  	<true/>
- 	<key>NSExceptionRequiresForwardSecrecy</key>
- 	<true/>
- 	<key>NSIncludesSubdomains</key>
- 	<true/>
- 	</dict>
+		<key>NSExceptionAllowsInsecuredHTTPLoads</key>
+		<true/>
+		<key>NSExceptionRequiresForwardSecrecy</key>
+		<true/>
+		<key>NSIncludesSubdomains</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

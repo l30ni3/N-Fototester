@@ -13,7 +13,7 @@ PODS:
   - Flipper (0.88.0):
     - Flipper-Folly (~> 2.6)
     - Flipper-RSocket (~> 1.4)
-  - Flipper-Boost-iOSX (1.76.0.1.10)
+  - Flipper-Boost-iOSX (1.76.0.1.11)
   - Flipper-DoubleConversion (1.1.7)
   - Flipper-Fmt (7.1.7)
   - Flipper-Folly (2.6.7):
@@ -290,6 +290,8 @@ PODS:
     - React-Core
   - react-native-safe-area-context (3.2.0):
     - React-Core
+  - react-native-splash-screen (3.2.0):
+    - React
   - React-perflogger (0.64.0)
   - React-RCTActionSheet (0.64.0):
     - React-Core/RCTActionSheetHeaders (= 0.64.0)
@@ -366,7 +368,7 @@ PODS:
     - React-Core
   - RNScreens (3.1.1):
     - React-Core
-  - RNSVG (12.1.1):
+  - RNSVG (9.13.6):
     - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -418,6 +420,7 @@ DEPENDENCIES:
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -505,6 +508,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -553,7 +558,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
   FBReactNativeSpec: f283f35c8b237f784ff0b99377366eb3435410d5
   Flipper: bbba2bf26e3377be472c5afd4113a4c77c4af07a
-  Flipper-Boost-iOSX: df3765e7e26b44bc3e68a250ef1fa0afa15963bc
+  Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Fmt: 60cbdd92fc254826e61d669a5d87ef7015396a9b
   Flipper-Folly: 83af37379faa69497529e414bd43fbfc7cae259a
@@ -584,6 +589,7 @@ SPEC CHECKSUMS:
   react-native-flipper: 5370d05b398481ee4589099e2e1962aba2e1cb90
   react-native-image-picker: 5bb3325530fd4dc3053a77a73d4f65b6649de820
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   React-perflogger: 9c547d8f06b9bf00cb447f2b75e8d7f19b7e02af
   React-RCTActionSheet: 3080b6e12e0e1a5b313c8c0050699b5c794a1b11
   React-RCTAnimation: 3f96f21a497ae7dabf4d2f150ee43f906aaf516f
@@ -602,10 +608,10 @@ SPEC CHECKSUMS:
   RNPermissions: 034db8a73d562766f990c89abbdeaa5d6e204c67
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
-  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1b6d7809976fc1922a2c2da210dba56c4af41ae8
+PODFILE CHECKSUM: ccb39fc56a583136cbe82a48f65557700c19d08e
 
 COCOAPODS: 1.10.1

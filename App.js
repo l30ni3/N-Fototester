@@ -4,6 +4,7 @@ import * as eva from '@eva-design/eva';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {AppNavigator} from './screens/components/navigation';
+import SplashScreen from 'react-native-splash-screen';
 
 export default () => (
   <>

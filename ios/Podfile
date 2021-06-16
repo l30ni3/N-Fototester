@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'HelloWorld' do
+target 'Fototester' do
   config = use_native_modules!
 
   use_react_native!(
@@ -12,7 +12,7 @@ target 'HelloWorld' do
     :hermes_enabled => false
   )
 
-  target 'HelloWorldTests' do
+  target 'FototesterTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -22,6 +22,7 @@ target 'HelloWorld' do
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
   use_flipper!({'Flipper' => '0.88.0'})
+  # use_flipper!({'Flipper-Folly' => '2.6.0'})
 
   post_install do |installer|
     react_native_post_install(installer)
