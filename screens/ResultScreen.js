@@ -44,7 +44,7 @@ export const ResultScreen = ({route, navigation}) => {
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
-  }, []);
+  });
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
@@ -52,12 +52,11 @@ export const ResultScreen = ({route, navigation}) => {
       .then(res => res.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
-  }, [isFocused]);
+  }, [isFocused, itemId]);
 
   useEffect(() => {
     console.log('useEffect after setData in ResultScreen');
     setAvatar(`${GLOBAL.SERVER_URL}/api/images/${data.name}`);
-    console.log(avatar);
   }, [data]);
 
   return (
