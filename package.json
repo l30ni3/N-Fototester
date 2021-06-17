@@ -51,12 +51,7 @@
     "react-test-renderer": "^17.0.1"
   },
   "jest": {
-    "verbose": true,
     "preset": "react-native",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-    "testPathIgnorePatterns": ["<rootDir>/build/", "<rootDir>/node_modules/"],
-    "transformIgnorePatterns": [
-      "node_modules/(?!@react-native|react-native)"
-    ]
+    "testPathIgnorePatterns": ["/node_modules/@ui-kitten/components"]
   }
 }
