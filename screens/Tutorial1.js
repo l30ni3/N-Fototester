@@ -90,6 +90,7 @@ export const Tutorial1 = ({navigation}) => {
             itemWidth={CARD_WIDTH}
             windowSize={1}
             hasParallaxImages={true}
+            testID="carousel"
           />
         </Layout>
 
