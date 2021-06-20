@@ -12,6 +12,7 @@ import {
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Permissions from 'react-native-permissions';
+import {uploadImage} from './services/Services';
 
 const GLOBAL = require('./components/constants');
 
@@ -100,25 +101,12 @@ export const ImageUpload = ({route, navigation}) => {
     formData.append('growth', growth);
     formData.append('variant', variant);
     formData.append('replicate', replicate);
-    fetch(`${GLOBAL.SERVER_URL}/api/upload`, {
-      method: 'POST',
-      body: formData,
-      // headers: {
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
-    })
-      .then(response => response.text())
-      .then(response => {
-        console.log('upload succes', response);
-        setItemId(response);
-        setIsLoading(false);
-        setPhoto(null);
-      })
-      .catch(error => {
-        console.log('upload error', error);
-        setIsLoading(false);
-      });
+    uploadImage(formData).then(response => {
+      console.log('upload succes', response);
+      setItemId(response);
+      setIsLoading(false);
+      setPhoto(null);
+    });
   };
 
   return (

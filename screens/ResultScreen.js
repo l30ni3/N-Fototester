@@ -17,6 +17,7 @@ import {
   TopNavigationAction,
   Spinner,
 } from '@ui-kitten/components';
+import {fetchResults} from './services/Services';
 import {useIsFocused} from '@react-navigation/native';
 const GLOBAL = require('./components/constants');
 
@@ -40,18 +41,12 @@ export const ResultScreen = ({route, navigation}) => {
   );
 
   useEffect(() => {
-    fetch(`${GLOBAL.SERVER_URL}/api/results/${itemId}`)
-      .then(res => res.json())
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetchResults().then(json => setData(json));
   });
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetch(`${GLOBAL.SERVER_URL}/api/results/${itemId}`)
-      .then(res => res.json())
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetchResults().then(json => setData(json));
   }, [isFocused, itemId]);
 
   useEffect(() => {

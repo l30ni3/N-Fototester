@@ -11,10 +11,10 @@ import {
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import {SafeAreaView, TextInput} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Moment from 'react-moment';
-import {fetchResults} from './services/Services';
+import {fetchResults, deleteResult} from './services/Services';
 const GLOBAL = require('./components/constants');
 
 export const HomeScreen = props => {
@@ -52,10 +52,8 @@ export const HomeScreen = props => {
       <Icon
         {...props}
         onPress={() => {
-          fetch(`${GLOBAL.SERVER_URL}/api/results/${props.itemId}/delete`)
-            .then(res => res.json())
-            .then(json => setData(json))
-            .catch(error => console.error(error));
+          console.log(props.itemId);
+          deleteResult({...props}).then(res => setData(res));
         }}
         name="trash-outline"
       />
@@ -104,8 +102,7 @@ export const HomeScreen = props => {
           }}
           title="Neue Messung starten"
           testID="buttonOnPress"
-          // onPress={() => navigation.navigate('Tutorial 1')}
-          onPress={() => console.log('button clicked!')}>
+          onPress={() => navigation.navigate('Tutorial 1')}>
           Neue Messung starten
         </Button>
       </Layout>
