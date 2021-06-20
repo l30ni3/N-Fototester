@@ -11,9 +11,10 @@ import {
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, TextInput} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Moment from 'react-moment';
+import {fetchResults} from './services/Services';
 const GLOBAL = require('./components/constants');
 
 export const HomeScreen = props => {
@@ -76,18 +77,12 @@ export const HomeScreen = props => {
   );
 
   useEffect(() => {
-    fetch(`${GLOBAL.SERVER_URL}/api/results`)
-      .then(res => res.json())
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetchResults().then(json => setData(json));
   }, []);
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetch(`${GLOBAL.SERVER_URL}/api/results`)
-      .then(res => res.json())
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetchResults().then(json => setData(json));
   }, [isFocused]);
 
   return (
@@ -107,7 +102,10 @@ export const HomeScreen = props => {
           style={{
             margin: 30,
           }}
-          onPress={() => navigation.navigate('Tutorial 1')}>
+          title="Neue Messung starten"
+          testID="buttonOnPress"
+          // onPress={() => navigation.navigate('Tutorial 1')}
+          onPress={() => console.log('button clicked!')}>
           Neue Messung starten
         </Button>
       </Layout>

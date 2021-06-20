@@ -551,6 +551,7 @@ exports[`renders correctly 1`] = `
             "paddingVertical": 12,
           }
         }
+        testID="buttonOnPress"
       >
         <Text
           appearance="default"

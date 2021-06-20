@@ -1,4 +1,6 @@
+import 'react-native-gesture-handler';
 import React from 'react';
+import {View, Text, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
@@ -7,7 +9,6 @@ import {
   IndexPath,
   DrawerGroup,
   Icon,
-  Text,
 } from '@ui-kitten/components';
 import {HomeScreen} from '../HomeScreen';
 import {SelectParams} from '../SelectParams';
