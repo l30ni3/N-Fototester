@@ -17,7 +17,7 @@ import {
   TopNavigationAction,
   Spinner,
 } from '@ui-kitten/components';
-import {fetchResults} from './services/Services';
+import {fetchResult, fetchImage} from './services';
 import {useIsFocused} from '@react-navigation/native';
 const GLOBAL = require('./components/constants');
 
@@ -40,18 +40,16 @@ export const ResultScreen = ({route, navigation}) => {
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
   );
 
-  useEffect(() => {
-    fetchResults().then(json => setData(json));
-  });
-
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetchResults().then(json => setData(json));
+    fetchResult(itemId)
+      .then(json => setData(json))
+      .catch(error => console.log(error));
   }, [isFocused, itemId]);
 
   useEffect(() => {
     console.log('useEffect after setData in ResultScreen');
-    setAvatar(`${GLOBAL.SERVER_URL}/api/images/${data.name}`);
+    setAvatar(fetchImage(data.name));
   }, [data]);
 
   return (
@@ -69,7 +67,8 @@ export const ResultScreen = ({route, navigation}) => {
               {/* <Avatar style={styles.avatar} source={{uri: avatar}} /> */}
               <Image
                 style={{width: window.width, height: window.height / 4}}
-                source={{uri: avatar}}></Image>
+                source={avatar ? {uri: avatar} : null}
+              />
             </View>
             <View
               style={[

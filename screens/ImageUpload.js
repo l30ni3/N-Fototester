@@ -12,7 +12,7 @@ import {
 } from '@ui-kitten/components';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Permissions from 'react-native-permissions';
-import {uploadImage} from './services/Services';
+import {uploadImage} from './services';
 
 const GLOBAL = require('./components/constants');
 

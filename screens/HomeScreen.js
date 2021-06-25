@@ -14,12 +14,13 @@ import {
 import {SafeAreaView} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import Moment from 'react-moment';
-import {fetchResults, deleteResult} from './services/Services';
+import {fetchResults, deleteResult, fetchImage} from './services';
 const GLOBAL = require('./components/constants');
 
 export const HomeScreen = props => {
   const navigation = props.navigation;
   const [data, setData] = useState([]);
+  const [avatars, setAvatars] = useState([]);
   const MenuIcon = props => <Icon {...props} name="menu-outline" />;
 
   const isFocused = useIsFocused();
@@ -31,12 +32,25 @@ export const HomeScreen = props => {
     />
   );
 
-  const renderAvatar = props => (
-    <Avatar
-      size="tiny"
-      source={{uri: `${GLOBAL.SERVER_URL}/api/images/${props.name}`}}
-    />
-  );
+  const renderAvatar = props => {
+    var avatar = avatars.reduce((result, item) => {
+      if (item.name === props.name) {
+        result = `${result}${item.uri}`;
+      }
+      return result;
+    }, '');
+
+    console.log(avatar);
+
+    return (
+      <Avatar
+        size="tiny"
+        source={
+          avatar ? {uri: avatar} : {uri: 'https://www.gravatar.com/avatar'}
+        }
+      />
+    );
+  };
 
   const renderItemAccessory = props => (
     <>
@@ -75,13 +89,32 @@ export const HomeScreen = props => {
   );
 
   useEffect(() => {
-    fetchResults().then(json => setData(json));
+    fetchResults()
+      .then(json => setData(json))
+      .catch(error => console.log(error));
   }, []);
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetchResults().then(json => setData(json));
+    fetchResults()
+      .then(json => setData(json))
+      .catch(error => console.log(error));
   }, [isFocused]);
+
+  useEffect(() => {
+    const updatedAvatars = [];
+    data.map(item =>
+      updatedAvatars.push({
+        name: item.name,
+        uri: fetchImage(item.name),
+      }),
+    );
+    setAvatars(updatedAvatars);
+  }, [data]);
+
+  useEffect(() => {
+    console.log('avatars', avatars);
+  }, [avatars]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
