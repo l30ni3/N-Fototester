@@ -70,6 +70,8 @@ export const Tutorial1 = ({navigation}) => {
     }
   }, [activeIndex]);
 
+  const onSubmit = () => navigation.navigate('Optionen wählen');
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <TopNavigation
@@ -103,7 +105,10 @@ export const Tutorial1 = ({navigation}) => {
               Zurück
             </Button>
           ) : (
-            <Button style={styles.intro_button} onPress={goBack}>
+            <Button
+              ata-testid="prev-button"
+              style={styles.intro_button}
+              onPress={goBack}>
               Zurück
             </Button>
           )}
@@ -115,15 +120,16 @@ export const Tutorial1 = ({navigation}) => {
               Starten
             </Button>
           ) : (
-            <Button style={styles.intro_button} onPress={goForward}>
+            <Button
+              data-testid="next-button"
+              style={styles.intro_button}
+              onPress={goForward}>
               Weiter
             </Button>
           )}
         </Layout>
         <Layout style={styles.skip} level="4">
-          <Text
-            style={styles.skip_text}
-            onPress={() => navigation.navigate('Optionen wählen')}>
+          <Text style={styles.skip_text} onPress={() => onSubmit()}>
             Überspringen
           </Text>
         </Layout>

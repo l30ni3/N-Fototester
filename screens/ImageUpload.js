@@ -102,7 +102,7 @@ export const ImageUpload = ({route, navigation}) => {
     formData.append('variant', variant);
     formData.append('replicate', replicate);
     uploadImage(formData).then(response => {
-      console.log('upload succes', response);
+      console.log('upload success', response);
       setItemId(response);
       setIsLoading(false);
       setPhoto(null);

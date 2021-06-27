@@ -5,6 +5,7 @@
 
 module.exports = {
   verbose: true,
+  testEnvironment: 'node',
   preset: 'react-native',
   setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
   transformIgnorePatterns: [
@@ -12,4 +13,5 @@ module.exports = {
   ],
   automock: false,
   setupFiles: ['./setupJest.js'],
+  testURL: 'http://localhost/',
 };

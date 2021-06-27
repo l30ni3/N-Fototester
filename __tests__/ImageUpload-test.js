@@ -10,6 +10,8 @@ import * as eva from '@eva-design/eva';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import renderer from 'react-test-renderer';
+import 'jest-fetch-mock';
+
 jest.useFakeTimers();
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
@@ -30,6 +32,10 @@ jest.mock('react-native-image-picker', () => ({
 jest.mock('react-native-permissions', () => ({
   Permissions: jest.fn(),
 }));
+
+function FormDataMock() {
+  this.append = jest.fn();
+}
 
 const mockedParams = {
   route: {
@@ -57,10 +63,24 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-//TO DO test image response
-it('return result id', async () => {
-  fetch.mockResponseOnce([JSON.stringify([{}]), {status: 200}]);
-  const res = await uploadImage();
-  expect(res).toEqual([JSON.stringify([{}]), {status: 200}]);
+it('return results id after image upload successful', async () => {
+  global.FormData = FormDataMock;
+  fetch.mockResponseOnce(JSON.stringify(1));
+  const res = await uploadImage(global.FormData);
+  expect(res).toEqual(JSON.stringify(1));
   expect(fetch.mock.calls.length).toEqual(1);
+});
+
+it('if image upload fails, throw an error', async () => {
+  expect.assertions(1);
+  let response = {
+    status: 400,
+    body: {},
+  };
+  fetch.mockReject(response);
+  try {
+    await uploadImage(global.FormData);
+  } catch (e) {
+    expect(e).toEqual(response);
+  }
 });

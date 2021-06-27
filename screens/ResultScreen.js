@@ -37,18 +37,19 @@ export const ResultScreen = ({route, navigation}) => {
   };
 
   const BackAction = () => (
-    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+    <TopNavigationAction
+      icon={BackIcon}
+      onPress={navigateBack}
+      testID="back-action"
+    />
   );
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetchResult(itemId)
-      .then(json => setData(json))
-      .catch(error => console.log(error));
+    fetchResult(itemId).then(json => setData(json));
   }, [isFocused, itemId]);
 
   useEffect(() => {
-    console.log('useEffect after setData in ResultScreen');
     setAvatar(fetchImage(data.name));
   }, [data]);
 

@@ -61,6 +61,7 @@ exports[`renders correctly 1`] = `
               "opacity": 1,
             }
           }
+          testID="back-action"
         >
           <View
             style={
@@ -409,11 +410,7 @@ exports[`renders correctly 1`] = `
         }
       >
         <Image
-          source={
-            Object {
-              "uri": "",
-            }
-          }
+          source={null}
           style={
             Object {
               "height": 333.5,

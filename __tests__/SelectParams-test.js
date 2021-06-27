@@ -9,9 +9,11 @@ import * as eva from '@eva-design/eva';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import renderer from 'react-test-renderer';
-import {mount} from 'enzyme';
+import {mount, shallow} from 'enzyme';
+
 jest.useFakeTimers();
 jest.mock('@react-navigation/native');
+const navigation = {navigate: jest.fn()};
 
 it('renders correctly', () => {
   const tree = renderer
@@ -27,28 +29,115 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-// test('submits username and password', () => {
-//   const username = 'me';
-//   const password = 'please';
-//   const onSubmit = jest.fn();
-//   const wrapper = mount(<SelectParams onSubmit={onSubmit} />);
+it('navigates to upload image screen after clicking on "Weiter"', () => {
+  const component = shallow(<SelectParams navigation={navigation} />);
+  component.find({children: 'Weiter'}).simulate('press');
+  expect(navigation.navigate).toBeCalledWith('Neue Messung', {
+    crop: 'Winterweizen',
+    growth: 'BBCH 20',
+    replicate: '',
+    variant: '',
+  });
+});
 
-//   wrapper
-//     .find({'data-testid': 'loginForm-username'})
-//     .simulate('change', {target: {value: username}});
+it('expect variant input to exist', () => {
+  const component = mount(
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <SelectParams navigation={navigation} />
+      </ApplicationProvider>
+    </>,
+  );
+  const input = component
+    .findWhere(node => node.prop('testID') === 'input-variant')
+    .first();
 
-//   wrapper
-//     .find({'data-testid': 'loginForm-password'})
-//     .simulate('change', {target: {value: password}});
+  expect(input).toBeTruthy();
+});
 
-//   wrapper.update();
-//   wrapper.find({'data-testid': 'loginForm'}).simulate('submit', {
-//     preventDefault: () => {},
-//   });
+it('update state and props after changing variant input', () => {
+  const handleVariantText = jest.fn();
+  const component = mount(
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <SelectParams
+          navigation={navigation}
+          onChangeText={handleVariantText}
+        />
+      </ApplicationProvider>
+    </>,
+  );
+  const input = component
+    .findWhere(node => node.prop('testID') === 'input-variant')
+    .first();
 
-//   expect(onSubmit).toHaveBeenCalledTimes(1);
-//   expect(onSubmit).toHaveBeenCalledWith({
-//     username,
-//     password,
-//   });
-// });
+  input.props().onChangeText('new variant value');
+  component.update();
+  expect(
+    component
+      .findWhere(node => node.prop('testID') === 'input-variant')
+      .first()
+      .props()
+      .value.toString(),
+  ).toEqual('new variant value');
+  component.find({children: 'Weiter'}).first().props().onPress();
+  expect(navigation.navigate).toBeCalledWith('Neue Messung', {
+    crop: 'Winterweizen',
+    growth: 'BBCH 20',
+    replicate: '',
+    variant: 'new variant value',
+  });
+});
+
+it('expect replicate input to exist', () => {
+  const component = mount(
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <SelectParams navigation={navigation} />
+      </ApplicationProvider>
+    </>,
+  );
+  const input = component
+    .findWhere(node => node.prop('testID') === 'input-replicate')
+    .first();
+
+  expect(input).toBeTruthy();
+});
+
+it('update state and props after changing replicate input', () => {
+  const handleVariantText = jest.fn();
+  const component = mount(
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <SelectParams
+          navigation={navigation}
+          onChangeText={handleVariantText}
+        />
+      </ApplicationProvider>
+    </>,
+  );
+  const input = component
+    .findWhere(node => node.prop('testID') === 'input-replicate')
+    .first();
+
+  input.props().onChangeText('new replicate value');
+  component.update();
+  expect(
+    component
+      .findWhere(node => node.prop('testID') === 'input-replicate')
+      .first()
+      .props()
+      .value.toString(),
+  ).toEqual('new replicate value');
+  component.find({children: 'Weiter'}).first().props().onPress();
+  expect(navigation.navigate).toBeCalledWith('Neue Messung', {
+    crop: 'Winterweizen',
+    growth: 'BBCH 20',
+    replicate: 'new replicate value',
+    variant: '',
+  });
+});

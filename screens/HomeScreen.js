@@ -89,16 +89,12 @@ export const HomeScreen = props => {
   );
 
   useEffect(() => {
-    fetchResults()
-      .then(json => setData(json))
-      .catch(error => console.log(error));
+    fetchResults().then(json => setData(json));
   }, []);
 
   //when using react navigation, screens need to refresh also on isFocused event
   useEffect(() => {
-    fetchResults()
-      .then(json => setData(json))
-      .catch(error => console.log(error));
+    fetchResults().then(json => setData(json));
   }, [isFocused]);
 
   useEffect(() => {

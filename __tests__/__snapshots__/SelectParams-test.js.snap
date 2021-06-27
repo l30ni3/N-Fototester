@@ -1305,6 +1305,7 @@ exports[`renders correctly 1`] = `
                     undefined,
                   ]
                 }
+                testID="input-variant"
                 underlineColorAndroid="transparent"
                 value=""
               />
@@ -1412,6 +1413,7 @@ exports[`renders correctly 1`] = `
                     undefined,
                   ]
                 }
+                testID="input-replicate"
                 underlineColorAndroid="transparent"
                 value=""
               />

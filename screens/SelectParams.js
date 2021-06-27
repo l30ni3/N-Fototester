@@ -43,10 +43,13 @@ export const SelectParams = ({navigation}) => {
 
   const renderOption = title => <SelectItem title={title} key={title} />;
 
-  // useEffect(() => {
-  //   console.log(variant, replicate, displayGrowthValue, displayCropValue);
-  // }, [displayCropValue, displayCropValue, replicate, variant]);
+  const handleVariantText = nextValue => {
+    setVariant(nextValue);
+  };
 
+  const handleReplicateText = nextValue => {
+    setReplicate(nextValue);
+  };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#101426'}}>
       <KeyboardAvoidingView
@@ -92,7 +95,8 @@ export const SelectParams = ({navigation}) => {
               placeholder="Default"
               value={displayGrowthValue}
               selectedIndex={growth}
-              onSelect={index => setGrowth(index)}>
+              onSelect={index => setGrowth(index)}
+              testID="select-growth">
               {GLOBAL.GROWTH_DATA.map(renderOption)}
             </Select>
             <Input
@@ -103,7 +107,8 @@ export const SelectParams = ({navigation}) => {
               )}
               placeholder="Bezeichnung eingeben"
               value={variant}
-              onChangeText={nextValue => setVariant(nextValue)}
+              onChangeText={nextValue => handleVariantText(nextValue)}
+              testID="input-variant"
             />
             <Input
               label={evaProps => (
@@ -113,7 +118,8 @@ export const SelectParams = ({navigation}) => {
               )}
               placeholder="Bezeichnung eingeben"
               value={replicate}
-              onChangeText={nextValue => setReplicate(nextValue)}
+              onChangeText={nextValue => handleReplicateText(nextValue)}
+              testID="input-replicate"
             />
 
             <Button
