@@ -66,8 +66,18 @@ def read_image_data(filename):
     img, path, filename = pcv.readimage(os.path.join(
         current_app.config["UPLOAD_FOLDER"], filename))
 
+    # Convert RGB to HSV and extract the saturation channel
+    s = pcv.rgb2gray_hsv(rgb_img=img, channel='s')
+
+    # Threshold the saturation image
+    s_thresh = pcv.threshold.binary(
+        gray_img=s, threshold=30, max_value=255, object_type='light')
+
+    # Apply Mask (for VIS images, mask_color=white)
+    masked = pcv.apply_mask(img=img, mask=s_thresh, mask_color='white')
+
     mask, masked_img = pcv.threshold.custom_range(
-        img=img, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
+        img=masked, lower_thresh=[25, 0, 0], upper_thresh=[75, 255, 255], channel='HSV')
 
     binary_img = pcv.median_blur(gray_img=mask, ksize=10)
 
@@ -81,7 +91,7 @@ def read_image_data(filename):
 
     # Define ROI
     roi1, roi_hierarchy = pcv.roi.rectangle(
-        img=img, x=0, y=h/8*3, h=h/4, w=w)
+        img=img, x=0, y=0, h=h, w=w)
 
     # Decide which objects to keep
     roi_objects, hierarchy3, kept_mask, obj_area = pcv.roi_objects(img=img, roi_contour=roi1,
@@ -104,10 +114,6 @@ def read_image_data(filename):
     print(pcv.outputs.observations['default']['hue_median']['value'])
 
     hm = pcv.outputs.observations['default']['hue_median']['value']
-
-    # # TODO Write shape data to results file/db
-    # pcv.outputs.save_results(
-    #     filename=os.path.join(TMP_FOLDER, 'results.json'))
 
     return hm
 
